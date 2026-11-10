@@ -3,897 +3,783 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>隱式職涯心理計量與決策羅盤 v5.1 (Robert Platt 整合版 · 60題 × 12維度)</title>
+  <title>深層職涯動力與台灣現實強制取捨羅盤 v6.0</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
     body {
-      font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: #f8fafc;
-      color: #0f172a;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
     }
-    .opt-btn {
-      transition: all 0.16s cubic-bezier(0.4, 0, 0.2, 1);
+    .option-btn {
+      transition: all 0.18s ease;
     }
-    .opt-btn.active {
-      background-color: #1e40af;
-      color: #ffffff;
-      border-color: #1e40af;
-      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+    .option-btn:hover {
       transform: translateY(-1px);
     }
-    .w-btn {
-      transition: all 0.15s ease;
+    .weight-badge {
+      cursor: pointer;
+      user-select: none;
     }
-    .w-btn.active-1 {
-      background-color: #e2e8f0;
-      color: #334155;
-      border-color: #cbd5e1;
+    ::-webkit-scrollbar {
+      width: 8px;
     }
-    .w-btn.active-2 {
-      background-color: #0f172a;
-      color: #ffffff;
-      border-color: #0f172a;
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
     }
-    .w-btn.active-3 {
-      background-color: #dc2626;
-      color: #ffffff;
-      border-color: #dc2626;
-      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
-    }
-    .toast-enter {
-      animation: slideUpFade 0.25s ease-out forwards;
-    }
-    @keyframes slideUpFade {
-      from { opacity: 0; transform: translate(-50%, 16px); }
-      to { opacity: 1; transform: translate(-50%, 0); }
+    ::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 4px;
     }
   </style>
 </head>
-<body class="min-h-screen pb-24 selection:bg-blue-600 selection:text-white">
+<body class="min-h-screen pb-20">
 
-  <!-- Top Sticky Header -->
-  <header class="bg-slate-900 text-white py-5 px-4 shadow-lg sticky top-0 z-40 border-b border-slate-800">
-    <div class="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
       <div>
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="bg-indigo-600 text-[11px] font-bold px-2.5 py-0.5 rounded-full tracking-wide uppercase">
-            Implicit Psychometrics v5.1
-          </span>
-          <span class="text-xs text-slate-400 font-medium">
-            60 題去標籤情境盲測 × Robert Platt 職涯全景對照 × 12 維零偏誤投影
-          </span>
+        <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-400">
+          <span class="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">Implicit Psychometrics v6.0</span>
+          <span>去幻想・台灣現實強制取捨與機率折現版</span>
         </div>
-        <h1 class="text-lg md:text-2xl font-extrabold tracking-tight mt-1 text-white">
-          深層職涯動力與結構適配盲測羅盤 v5.1
+        <h1 class="text-xl md:text-2xl font-bold text-white mt-1">
+          深層職涯動力 × 台灣現實重力決策羅盤
         </h1>
       </div>
-
-      <!-- Preset & Direct Action Buttons -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button onclick="loadPreset('real')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold rounded-lg shadow transition flex items-center gap-1">
-          <span>⚡</span> 載入真實情境模擬
+      <div class="flex items-center gap-2">
+        <button onclick="loadBrianPreset()" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition">
+          載入你前次盲測基準向量
         </button>
-        <button onclick="loadPreset('neutral')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition">
-          🔄 重置全中立 (驗證 50.0% 基準)
-        </button>
-        <button onclick="switchMainView('results')" id="header-res-btn" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold rounded-lg shadow transition">
-          📊 查看即時診斷報告
+        <button onclick="resetAll()" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+          重置全卷
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-4 mt-6">
+  <main class="max-w-6xl mx-auto px-4 mt-6 space-y-8">
 
-    <!-- Sub-navigation & Progress Bar -->
-    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 mb-6">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-        <div class="flex flex-wrap items-center gap-1.5" id="page-tabs">
-          <!-- Dynamically populated tabs -->
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-semibold text-slate-500">已分化作答題數：</span>
-          <span id="answered-badge" class="text-xs font-extrabold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full border border-blue-200">
-            0 / 60 題分化
-          </span>
-        </div>
-      </div>
-
-      <!-- Blind Test Instruction Banner -->
-      <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600">
-        <div>
-          <strong class="text-slate-900">💡 單盲去標籤化設計說明：</strong>
-          全卷已全面抹除機構名稱與職業身分標籤，融入 Robert Platt 教授揭露之「軟性經費生存、管理者角色異化、慢性受挫力與真實公衛 ROI」等深層面向。請純粹依據您的<strong class="text-blue-700">第一情緒反應</strong>作答。
-        </div>
-        <div class="shrink-0 flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
-          <span class="inline-block w-2 h-2 rounded-full bg-slate-400"></span>1x 一般
-          <span class="inline-block w-2 h-2 rounded-full bg-slate-900 ml-1"></span>2x 重要
-          <span class="inline-block w-2 h-2 rounded-full bg-red-600 ml-1"></span>3x 絕對紅線
-        </div>
-      </div>
+    <!-- 獨立顧問警告橫幅 -->
+    <div class="p-4 rounded-xl bg-rose-950/40 border border-rose-500/40 text-rose-200 text-sm leading-relaxed">
+      <div class="font-bold text-rose-400 mb-1">⚠️ v6.0 核心演算法修正說明（拔除美好幻想濾鏡）：</div>
+      舊版問卷假設你可以無摩擦進入「歐美總部理想鄉（高方法學＋高薪＋高生活邊界）」。本版強制導入<strong>「台灣在地結構性殘缺」</strong>：在台灣，<strong>沒有任何一個職位能同時滿足你的 E軸（方法學潔癖）、B軸（下班關機）與 M軸（高變現）</strong>。每一題皆為「兩害相權取其輕」的強制取捨，並於最終報表乘上<strong>「職缺真實發生率與家庭地理限制」</strong>。
     </div>
 
-    <!-- QUESTIONNAIRE VIEW -->
-    <section id="quiz-view" class="space-y-4">
-      <div id="questions-list" class="space-y-4"></div>
-
-      <!-- Bottom Pagination Bar -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between mt-6">
-        <button onclick="stepPage(-1)" id="btn-prev" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs md:text-sm font-bold rounded-xl transition disabled:opacity-40">
-          ← 上一組題目
-        </button>
-        <div class="text-center">
-          <div id="page-indicator" class="text-xs font-extrabold text-slate-700">第 1 / 6 組</div>
-          <div class="text-[11px] text-slate-400 mt-0.5">每組 10 題，隨時可切換上方分頁或查看診斷報告</div>
+    <!-- 現實重力參數控制面板 (Reality Gravity Sliders) -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <span>⚓ 第一步：設定你的「現實重力與外部邊界參數」</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">這些不是你的心理偏好，而是你無法迴避的客觀環境限制。調整滑桿將即時重算下方六大賽道的「真實期望勝率」。</p>
         </div>
-        <button onclick="stepPage(1)" id="btn-next" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-bold rounded-xl shadow transition">
-          下一組題目 →
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Slider 1: 伴侶/家庭地理鎖死度 -->
+        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
+          <div class="flex justify-between text-xs font-semibold mb-2">
+            <span class="text-slate-300">🏠 家庭地理鎖死度 (拒絕赴美/跨國搬遷)</span>
+            <span id="val-geo" class="text-amber-400 font-mono">85%</span>
+          </div>
+          <input id="slider-geo" type="range" min="0" max="100" value="85" oninput="updateGravity()" class="w-full accent-amber-500 cursor-pointer" />
+          <div class="flex justify-between text-[11px] text-slate-500 mt-1">
+            <span>0% 隨時可全家赴美</span>
+            <span>50% 可接受台北雙城</span>
+            <span>100% 鎖死台南自住</span>
+          </div>
+        </div>
+
+        <!-- Slider 2: 二月醫學系新缺真實勝出率 -->
+        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
+          <div class="flex justify-between text-xs font-semibold mb-2">
+            <span class="text-slate-300">🎲 醫學系二月「順利設缺且贏過博後學長」機率</span>
+            <span id="val-acad-prob" class="text-emerald-400 font-mono">25%</span>
+          </div>
+          <input id="slider-acad-prob" type="range" min="5" max="90" value="25" oninput="updateGravity()" class="w-full accent-emerald-500 cursor-pointer" />
+          <div class="flex justify-between text-[11px] text-slate-500 mt-1">
+            <span>15% 客觀連乘機率</span>
+            <span>50% 主觀樂觀估計</span>
+            <span>90% 內定保證</span>
+          </div>
+        </div>
+
+        <!-- Slider 3: 獨立陌生開發業界暗盤的執行力 -->
+        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
+          <div class="flex justify-between text-xs font-semibold mb-2">
+            <span class="text-slate-300">🕵️ 不靠指導教授、自己敲開業界隱藏缺的意願</span>
+            <span id="val-hustle" class="text-sky-400 font-mono">60%</span>
+          </div>
+          <input id="slider-hustle" type="range" min="10" max="100" value="60" oninput="updateGravity()" class="w-full accent-sky-500 cursor-pointer" />
+          <div class="flex justify-between text-[11px] text-slate-500 mt-1">
+            <span>10% 離開老師就恐慌</span>
+            <span>60% 願主動私訊學長姐</span>
+            <span>100% 積極獵頭出擊</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 進度與分頁導覽 -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+        <div class="flex flex-wrap gap-2" id="group-tabs"></div>
+        <div class="text-xs text-slate-400 font-mono">
+          已作答進度：<span id="progress-text" class="text-white font-bold">0 / 36</span> 題
+        </div>
+      </div>
+
+      <!-- 題目容器 -->
+      <div id="questions-container" class="space-y-4"></div>
+
+      <!-- 底部換頁 -->
+      <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-800">
+        <button id="btn-prev" onclick="changeGroup(-1)" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 disabled:opacity-40">
+          ← 上一組
+        </button>
+        <span id="group-indicator" class="text-xs text-slate-400">第 1 / 6 組</span>
+        <button id="btn-next" onclick="changeGroup(1)" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white">
+          下一組 →
         </button>
       </div>
     </section>
 
-    <!-- RESULTS DASHBOARD VIEW -->
-    <section id="results-view" class="hidden space-y-6">
-      
-      <!-- Top Summary KPI Cards -->
+    <!-- 即時診斷與雙重排行結果 -->
+    <section class="space-y-6">
+      <!-- 頂部三大核心指標卡 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">首選高契合職涯賽道 (Top 1 Fit)</div>
-          <div id="kpi-top-path" class="text-base md:text-lg font-extrabold text-blue-700 mt-1.5 leading-snug">--</div>
-          <div class="mt-3 flex items-center justify-between text-xs">
-            <span class="text-slate-500">正交投影契合度</span>
-            <span id="kpi-top-score" class="font-extrabold text-slate-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">--%</span>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="text-xs text-slate-400">🧠 純心理契合度最高 (不計現實阻礙)</div>
+          <div id="top-raw-title" class="text-lg font-bold text-indigo-400 mt-1">--</div>
+          <div class="mt-2 text-xs text-slate-500 flex justify-between">
+            <span>正交心理契合度</span>
+            <span id="top-raw-score" class="font-mono font-bold text-white">--%</span>
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">審批窒息感 × 形式門檻耐受</div>
-          <div id="kpi-trauma-title" class="text-base md:text-lg font-extrabold text-amber-600 mt-1.5 leading-snug">--</div>
-          <p id="kpi-trauma-desc" class="text-xs text-slate-500 mt-2 leading-relaxed">--</p>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">科學工具化 × 內在後路張力</div>
-          <div id="kpi-tension-title" class="text-base md:text-lg font-extrabold text-slate-900 mt-1.5 leading-snug">--</div>
-          <p id="kpi-tension-desc" class="text-xs text-slate-500 mt-2 leading-relaxed">--</p>
-        </div>
-      </div>
-
-      <!-- 6 Career Pathways Ranking -->
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <div>
-            <h2 class="text-lg md:text-xl font-extrabold text-slate-900">🏆 六大細分賽道「零中心化」契合度排行</h2>
-            <p class="text-xs text-slate-500 mt-0.5">
-              採用 12 維正交投影餘弦相似矩陣（全卷 3 分中立時嚴格等於 <code class="bg-slate-100 px-1 py-0.5 rounded font-bold text-slate-700">50.0%</code>，徹底消滅中間偏誤）。
-            </p>
+        <div class="bg-slate-900 border border-amber-500/40 rounded-2xl p-5">
+          <div class="text-xs text-amber-400 font-semibold">⚖️ 現實重力校正後「最佳實戰解」</div>
+          <div id="top-real-title" class="text-lg font-bold text-white mt-1">--</div>
+          <div class="mt-2 text-xs text-slate-400 flex justify-between">
+            <span>真實期望效用 (Expected Utility)</span>
+            <span id="top-real-score" class="font-mono font-bold text-amber-400">--%</span>
           </div>
-          <button onclick="switchMainView('quiz')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition">
-            ← 返回微調題目答案
-          </button>
         </div>
-        <div id="pathways-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+        <div class="bg-slate-900 border border-rose-500/40 rounded-2xl p-5">
+          <div class="text-xs text-rose-400 font-semibold">💥 最大自欺欺人張力點 (Cognitive Dissonance)</div>
+          <div id="dissonance-title" class="text-sm font-bold text-rose-200 mt-1">--</div>
+          <p id="dissonance-desc" class="text-xs text-slate-400 mt-1.5 leading-relaxed">--</p>
+        </div>
       </div>
 
-      <!-- Charts Grid: 12-Axis Diverging Bar + Diagnostic Decoding -->
+      <!-- 雙軌對照排行與雷達圖 -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-7 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h3 class="text-base font-extrabold text-slate-900 mb-1">🧭 十二維深層動力光譜 (50.0% 為嚴格中立基準)</h3>
-          <p class="text-xs text-slate-500 mb-4">數值大於 50% 代表偏向右側特質；小於 50% 代表偏向左側特質。</p>
-          <div class="w-full">
-            <canvas id="axisBarChart" height="370"></canvas>
-          </div>
-          <div id="axis-legend-table" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-600 border-t border-slate-100 pt-3"></div>
+        <!-- 六大台灣真實賽道排行 -->
+        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <h3 class="text-base font-bold text-white mb-1">🏆 台灣六大真實處境賽道：純心理契合 vs. 現實重力校正</h3>
+          <p class="text-xs text-slate-400 mb-4">
+            「純心理契合」反映你的靈魂渴望；「現實校正效用」則扣除了赴美阻力、開缺踏空風險與自我推銷門檻。
+          </p>
+          <div id="tracks-list" class="space-y-4"></div>
         </div>
 
-        <div class="lg:col-span-5 bg-slate-900 text-white p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+        <!-- 12維度雷達與致命排斥點 -->
+        <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
           <div>
-            <div class="inline-block bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full mb-2">
-              Deep Structural Analysis v5.1
+            <h3 class="text-base font-bold text-white mb-1">🧭 十二維深層動力與「台灣職場摩擦點」</h3>
+            <p class="text-xs text-slate-400 mb-3">50% 為嚴格中立基準；超過 70% 代表你在該維度有強烈潔癖或底線。</p>
+            <div class="bg-slate-950 rounded-xl p-2 border border-slate-800">
+              <canvas id="radarChart" height="290"></canvas>
             </div>
-            <h3 class="text-base md:text-lg font-extrabold text-white mb-3">
-              🔍 潛意識張力與結構性矛盾深度解碼
-            </h3>
-            <ul id="insights-list" class="space-y-3 text-xs text-slate-300 leading-relaxed"></ul>
           </div>
-
-          <div class="mt-6 pt-4 border-t border-slate-800">
-            <div class="text-xs font-bold text-red-400 mb-1.5">🔒 您標記的 3x 絕對紅線與 2x 核心偏好：</div>
-            <div id="dealbreakers-summary" class="text-[11px] text-slate-300 leading-relaxed"></div>
-          </div>
+          <div id="axes-bars" class="space-y-2 mt-4 max-h-64 overflow-y-auto pr-1"></div>
         </div>
       </div>
 
-      <!-- Prompt Export Box -->
-      <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-blue-600">
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-3">
-          <div>
-            <span class="bg-blue-100 text-blue-800 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full">
-              高階 AI 診斷專用封裝包 v5.1 (含 Robert Platt 觀點對照)
-            </span>
-            <h3 class="text-base md:text-lg font-extrabold text-slate-900 mt-1">
-              一鍵複製「60 題去標籤遙測數據 ＋ 12 維深層心理動力深度診斷 Prompt」
-            </h3>
-            <p class="text-xs text-slate-500 mt-0.5">
-              已完整打包您的十二維得分、六大賽道契合度、紅線清單與 60 題原始作答向量。可直接貼給高階模型進行直指核心的決策推演。
-            </p>
-          </div>
-          <button onclick="copyGeneratedPrompt()" id="btn-copy-prompt" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs md:text-sm font-extrabold rounded-xl shadow transition shrink-0">
-            📋 一鍵複製完整 Prompt
+      <!-- 獨立顧問不留情面診斷報告 -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-bold text-amber-400">🗡️ 獨立策略顧問：去濾鏡殘酷剖析與行動配額</h3>
+          <button onclick="copyDiagnosticPrompt()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition">
+            📋 一鍵複製 v6.0 完整遙測數據與獨立批判 Prompt
           </button>
         </div>
-        <textarea id="prompt-textarea" rows="14" readonly class="w-full p-4 text-xs font-mono bg-slate-50 border border-slate-300 rounded-xl text-slate-700 focus:outline-none leading-relaxed"></textarea>
+        <div id="brutal-feedback" class="space-y-3 text-sm text-slate-300 leading-relaxed"></div>
       </div>
-
     </section>
+
   </main>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl border border-slate-700 text-xs font-bold z-50 hidden">
-    <span id="toast-msg">訊息提示</span>
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 hidden bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold z-50">
+    已複製到剪貼簿！
   </div>
 
-  <script>
-    // =========================================================================
-    // 1. TWELVE LATENT PSYCHOLOGICAL AXES (0% = Left, 50% = Neutral, 100% = Right)
-    // =========================================================================
-    const AXES = {
-      G: {
-        name: '單向審批窒息感 (Gatekeeper Aversion)',
-        left: '能平靜順應匿名主觀把關與迎合潛規則',
-        right: '極度厭惡被少數外部守門人掐住脖子決定生死'
-      },
-      M: {
-        name: '異化補償定價觀 (Compensated Alienation)',
-        left: '願為崇高名義與清譽忍受低度物質回報',
-        right: '既然逃不掉世俗枷鎖，不如將委屈換成最高現金與股權'
-      },
-      E: {
-        name: '方法學純粹潔癖 (Epistemic Purism)',
-        left: '80/20 務實夠用與短期落地速度優先',
-        right: '追求極致因果推論與高階數理模型的嚴謹驕傲'
-      },
-      A: {
-        name: '議程定義主權度 (Agenda Sovereignty)',
-        left: '擅長以既有資源解決組織框定之策略痛點',
-        right: '必須由自己從零定義問題，排斥既定規格框架'
-      },
-      T: {
-        name: '時間折現敏感度 (Temporal Discounting)',
-        left: '願熬 5–8 年低薪高壓換取四十歲後終身穩定',
-        right: '要求 1–3 年內立即變現專業價值並取得高現金流'
-      },
-      S: {
-        name: '團隊成熟度偏好 (Peer Collaboration vs. Apprenticeship)',
-        left: '渴望從零訓練初學者並建立個人師徒王國',
-        right: '偏好與成熟專家平起平坐協作，拒絕手把手帶新手'
-      },
-      B: {
-        name: '生活疆界防護力 (Boundary Segmentation)',
-        left: '工作與生活日夜融合，假日仍自發掛念進度',
-        right: '週五下班後必須徹底關機斷聯，拒絕隱形無休'
-      },
-      P: {
-        name: '公開署名不朽性 (Public Authorship Legacy)',
-        left: '接受成果化為機構內部專有機密資產',
-        right: '心血結晶必須公開發表掛名並寫入領域標準指南'
-      },
-      X: {
-        name: '網絡可逃離自由 (Network Exit Mobility)',
-        left: '願綁定單一封閉圈子與年資體系換取鐵飯碗',
-        right: '極度排斥小圈子壟斷，要求隨時跨國跳槽加薪的自由'
-      },
-      O: {
-        name: '單向閥後路焦慮 (Irreversible Option Anxiety)',
-        left: '更恐懼錯失主流市場累積商業資歷與資產的黃金期',
-        right: '更恐懼一旦中斷公開代表作就永遠失去回流殿堂資格'
-      },
-      H: {
-        name: '形式門檻耐受度 (Rite-of-Passage Tolerance)',
-        left: '接受制度性過渡考核與年資磨練是必經台階',
-        right: '產出已達標卻仍被強制要求過渡身分與走形式時會深感反胃'
-      },
-      R: {
-        name: '科學工具化耐受度 (Scientific Instrumentalization Tolerance)',
-        left: '泰然接受分析推論服務於組織商業利益與妥協包裝',
-        right: '極度排斥嚴謹科學結論被商業立場框架、修改或擱置'
-      }
-    };
+<script>
+// 12 維度定義
+const AXES = {
+  G: { code: 'G', name: '單向審批窒息感', left: '能順應匿名審查與潛規則', right: '極度痛恨被守門人掐脖子' },
+  M: { code: 'M', name: '異化補償定價觀', left: '願為清譽忍受低物質回報', right: '受委屈必須換取最高現金' },
+  E: { code: 'E', name: '方法學純粹潔癖', left: '80/20 務實夠用與商业落地', right: '追求極致因果推論與模型驕傲' },
+  A: { code: 'A', name: '議程定義主權度', left: '擅長解決組織框定之策略痛點', right: '必須從零自創題目排斥框架' },
+  T: { code: 'T', name: '時間折現敏感度', left: '願熬 5-8 年換中年安穩', right: '要求 1-3 年立即高現金變現' },
+  S: { code: 'S', name: '團隊成熟度偏好', left: '樂於從零教導學生建立師徒制', right: '只願與成熟專家協作拒當保母' },
+  B: { code: 'B', name: '生活疆界防護力', left: '工作生活日夜融合假日掛念', right: '週五下班徹底關機拒絕無休' },
+  P: { code: 'P', name: '公開署名不朽性', left: '接受成果化為機構內部資產', right: '必須公開發表掛名留存文獻' },
+  X: { code: 'X', name: '網絡可逃離自由', left: '願綁定單一體系換取鐵飯碗', right: '排斥小圈子壟斷要求隨時跳槽' },
+  O: { code: 'O', name: '單向閥後路焦慮', left: '更恐懼錯失商業資本累積期', right: '更恐懼離開學界就永遠回不去' },
+  H: { code: 'H', name: '形式門檻耐受度', left: '接受年資排隊與過渡期磨練', right: '產出達標卻被逼蹲過渡期會反胃' },
+  R: { code: 'R', name: '科學工具化耐受', left: '泰然接受研究服務於商業包裝', right: '極度排斥科學結論受商業干預' }
+};
 
-    // =========================================================================
-    // 2. 60 IMPLICIT DE-LABELED VIGNETTES (Fully single-blind, counterbalanced)
-    // =========================================================================
-    const QUESTIONS = [
-      [1, 'G', +1, 'X', +0.5, '當一份耗時數月心血完成的嚴密方案，必須交由兩三位不需為結果負任何責任的外部把關者主觀裁決，且我只能單向低姿態寫信迎合時，我會產生強烈的生理窒息感。'],
-      [2, 'E', +1, 'A', +0.4, '如果日常任務只能使用粗糙傳統的描述性工具、無法導入最前沿嚴謹的推論模型，就算待遇優渥，我也會覺得自己的核心武功正在被廢掉。'],
-      [3, 'M', +1, 'T', +0.5, '我常有一種深刻的體悟：既然在任何人類組織裡都逃不掉世俗評價、妥協與權力枷鎖，那最誠實的尊重就是把我的委屈與時間用最高額的真金白銀買下來。'],
-      [4, 'T', -1, 'M', -0.5, '為了換取四十歲以後極致的個人自主權與不被解僱的終身保障，我願意在三十歲世代接受明顯低於市場行情的收入與數年的短期合約壓力。'],
-      [5, 'S', +1, 'B', +0.4, '當團隊裡有人連基礎資料處理或邏輯都反覆出錯時，我傾向直接與成熟的專業同儕接手解決，非常排斥花半年時間手把手從零教導初學者。'],
-      [6, 'P', +1, 'O', +0.4, '如果我設計出一套極為精妙的分析架構並解決了重大難題，卻因為組織保密條款永遠不能對外公開發表、也不能放入個人公開作品集，我會感到深層的失落。'],
-      [7, 'B', +1, 'T', +0.3, '我非常渴望一種「週五傍晚關上電腦後，整個週末腦海裡完全不需要掛念還有哪篇文稿沒改完、哪個申請案沒著落」的純粹休假感。'],
-      [8, 'X', +1, 'G', +0.5, '我極度排斥待在一個「圈子極小、只要無意間得罪兩三位資深前輩，未來十年在整個領域的審批與升遷都會被暗中卡死」的封閉生態系。'],
-      [9, 'A', +1, 'E', +0.4, '比起在組織已經框定好的策略目標與資源下尋找最佳解方，我更著迷於完全由自己從零發掘一個沒人注意到的冷門問題並獨立定義它。'],
-      [10, 'O', +1, 'P', +0.5, '在做人生分水嶺抉擇時，「一旦跨出這一步，未來就再也無法回頭取得某個象徵最高智識地位的殿堂門票」，這種單向閥焦慮讓我極度猶豫。'],
-      [11, 'G', -1, 'P', +0.3, '我認為由領域內的資深同行進行嚴苛、漫長、甚至帶有個人學派偏見的匿名審查，仍是淬鍊人類最高品質知識不可或缺的機制，我能平靜接受這種規則。'],
-      [12, 'M', +1, 'X', +0.4, '當看到能力相仿的同儕在另一種體系領取兩倍以上的年薪與配股，而自己卻為了爭取微薄的運作預算熬夜寫申請書時，單靠「理想與清譽」完全無法撫平我的心理落差。'],
-      [13, 'E', -1, 'A', -0.4, '在面對高壓決策時，我更享受在兩週內交付一個「80分但能立刻改變實務行動與資金配置」的方案，勝過花一年把模型打磨到「99分卻只停留在紙上」。'],
-      [14, 'S', -1, 'P', +0.4, '看著自己從零帶起的年輕後輩或學徒，從懵懂無知到能獨當一面並傳承我的思想體系，這種「師徒傳承」的感動是我職涯不可或缺的核心價值。'],
-      [15, 'B', -1, 'A', +0.4, '我不介意工作與生活的界線完全模糊；平日下午自由去運動喝咖啡、深夜十一點再打開電腦跑模型寫文章，這種自發性無邊界的生活更適合我。'],
-      [16, 'G', +1, 'M', +0.5, '一想到未來十年每年都得定期撰寫長篇累牘的經費乞求計畫書，把整個團隊的生存命脈交給少數幾位委員打分數，我就感到深層的生理厭倦。'],
-      [17, 'X', +1, 'O', -0.4, '如果在工作中遇到有毒的文化或不合理的評價，我希望自己擁有「隨時更新履歷、三個月內平調或跳槽到另一家跨國機構並加薪 20%」的市場自由。'],
-      [18, 'P', -1, 'M', +0.4, '在專業場合或親友聚會中，名片上印的是「傳統清譽學者頭銜」還是「跨國機構首席專家／策略負責人」，對我的自尊心毫無差別，實質可支配所得才重要。'],
-      [19, 'T', +1, 'M', +0.5, '考量到未來三到五年的居住品質、家庭財務安全感與伴侶生活體驗，起薪厚度、年度獎金與資產累積速度，是我完全無法妥協的硬指標。'],
-      [20, 'A', -1, 'S', +0.4, '我喜歡問題本身已經具備明確的外部需求與充沛資源配置（例如解決某個迫切的跨國法規或產品決策痛點），讓我能專注於設計最精準的分析策略。'],
-      [21, 'G', +1, 'X', +0.5, '為了讓自己的心血結晶順利通過審批，不得不刻意迎合某些權威人士的保守口味、甚至被迫引用或討好特定門派的潛規則，讓我感到非常反胃。'],
-      [22, 'S', +1, 'G', +0.4, '當我的分析結論遭到外部監管或審查機構質疑時，我希望背後有一個龐大的跨職能專業團隊（法規、策略、管理層）與我共同扛責應戰，而非我一人獨自面對審判。'],
-      [23, 'E', +1, 'P', +0.4, '與具備同等深厚數理與因果推論背景的專家深入探討模型假設與漸近性質，比花時間用白話文向不懂技術的高階主管做簡報更讓我感到快樂。'],
-      [24, 'B', +1, 'M', +0.3, '表面上擁有自由排假的彈性，但實際上連出國旅遊走在街上時，腦子裡都還掛念著沒改完的文稿與待審的計畫，這種「隱形無休」比固定工時更折磨人。'],
-      [25, 'O', -1, 'T', +0.5, '比起擔心失去某種傳統菁英殿堂的入場券，我更恐懼「在低薪高壓的等待期蹉跎了三五年，最後發現自己錯失了在主流市場累積年資與複利資產的黃金期」。'],
-      [26, 'M', -1, 'A', +0.4, '即便某個職位開出極具誘惑力的高薪與配股，如果要我每天為了機構的商業利益、市場滲透率或財務報表而服務，我內心還是會覺得缺少了一份崇高感。'],
-      [27, 'X', -1, 'T', -0.4, '比起跨國大型機構可能因為全球策略轉型或產品線整併而帶來的部門重組風險，我更願意忍受前期的嚴苛升等淘汰考核，去換取後半輩子極度穩定的體制保障。'],
-      [28, 'P', +1, 'E', +0.4, '十年後回首，如果我提出的推論框架或實證發現能被寫入國際標準指南與教科書、成為後人引用的經典，這份成就感遠大於促成任何商業專案落地。'],
-      [29, 'T', +1, 'X', +0.4, '我非常排斥「按年資排隊、不管產出含金量差異大家領差不多死薪水」的僵化薪級表；我偏好個人貢獻與專業稀缺性能立即反映在當年度獎酬與股權上的機制。'],
-      [30, 'S', -1, 'A', +0.5, '比起在大型跨國矩陣組織裡擔任高級智囊，我更渴望擁有一個完全以我個人名字代表的小型獨立實驗室，一切研究方向與人事由我一人說了算。'],
-      [31, 'G', +1, 'B', +0.4, '當個人的升遷與去留完全取決於「外部匿名把關者是否買單」這種高度隨機的黑箱，而非「我實際解決問題的專業時數與能力」時，這種失控感會讓我極度焦慮。'],
-      [32, 'M', +1, 'B', +0.4, '當我因為高強度的腦力工作感到疲憊時，看著帳戶裡豐厚的存款增長、投資部位與隨時能帶家人享受高品質旅行的底氣，能給我最真實的情緒修復力。'],
-      [33, 'E', -1, 'S', +0.3, '如果一套穩健的分析方法已經足以說服決策者並順利過關，我不會為了追求方法學上的炫技或原創價值，而額外花三個月去重寫更複雜的模型。'],
-      [34, 'O', +1, 'P', +0.5, '我內心深處有一種聲音：如果現在放棄了累積公開個人第一作者代表作的軌道，會不會等我四十歲財富穩定後，反而後悔自己當年沒有挑戰那個最難的學術殿堂？'],
-      [35, 'A', -1, 'M', +0.4, '當我作為出資方或策略制定者（甲方），拿著組織的豐厚預算去委託外部學者專家執行研究、並負責審查他們的成果時，這種掌握資源主導權的位置非常適合我。'],
-      [36, 'B', +1, 'S', +0.4, '我非常討厭處理與核心研究分析無關的體制雜務（如應付流於形式的行政評鑑、基礎課程備課批改、或替初學者修改基本文書與程式語法錯誤）。'],
-      [37, 'X', +1, 'G', +0.4, '當一個體系的遊戲規則要求我必須在未來五到七年內持續通過同儕審批錦標賽才能保住工作時，我寧可選擇一個一開始就用高薪承認我即戰力價值的環境。'],
-      [38, 'P', -1, 'T', +0.4, '只要我主導的實證策略真正改變了跨國醫療產品決策或給付標準，就算最終對外文件上沒有印上我的個人大名，我也一樣擁有強烈的專業成就感。'],
-      [39, 'E', +1, 'O', +0.3, '我非常珍惜自己在高階量化與因果推論方法學上的獨特深度，絕對無法接受進入一個把我當成「一般商業報表生產工」的平庸環境。'],
-      [40, 'M', +1, 'G', +0.5, '既然世俗的評價與枷鎖在哪裡都存在，與其待在一個「既要受匿名審批之氣、又要裝作清高不談錢」的環境，我寧可去一個把商業利益與規則攤在陽光下的地方。'],
-      [41, 'H', +1, 'G', +0.4, '當我已經拿得出該領域最頂尖水準的代表作與扎實成果時，若體制仍硬性要求我必須額外掛著一到兩年臨時過渡身分、做形式上的年資歷練才能取得正式對等認可，我會產生強烈的不適與被羞辱感。'],
-      [42, 'H', -1, 'E', +0.3, '即使個人已經有不錯的產出，在更資深權威的帶領下多經歷一兩年高強度的過渡性歷練與淬鍊，確實能讓思維格局與抗壓性脫胎換骨，這種必經磨練是合理且值得的。'],
-      [43, 'H', +1, 'T', +0.4, '面對兩個選項：一個要求我先用低薪與附屬身分「證明自己」一兩年才看表現轉正；另一個從第一天起就以市場正式職級與相稱薪酬承認我的即戰力，我會毫不猶豫選擇後者，拒絕接受身分矮化。'],
-      [44, 'H', -1, 'B', -0.3, '任何人在進入一個新的高階領域初期，前兩三年本來就該做好「承受更多嚴格檢視、甚至做一些雜活來累積信任」的心理準備，這是一種尊重體制運作的必要付出。'],
-      [45, 'R', +1, 'E', +0.5, '當一份花費心血設計的嚴謹推論模型得出客觀結論後，若組織決策層因為該結論不利於整體的商業推廣或策略宣傳，而要求我「調整詮釋角度甚至擱置發表」，我會感到內在科學自尊受到嚴重侵犯。'],
-      [46, 'R', -1, 'M', +0.4, '在大型組織裡，數據與推論本來就是輔助高層做出商業獲利或合規決策的工具。只要組織在薪酬、股權與升遷上給予豐厚補償，最終結論如何被策略性包裝或取捨，我完全能夠理性配合。'],
-      [47, 'R', +1, 'P', +0.5, '如果非技術背景的策略或法規主管為了配合審批方便，要求我捨棄更精準的模型而改用粗糙但常見的方法，且我不被允許提出實質反對，這種「外行指導內行」會讓我感到窒息。'],
-      [48, 'R', -1, 'A', -0.4, '比起在某些封閉圈子裡猜測少數把關者的個人隱密喜好，按照明確的組織商業目標與既定規格去優化方案，反而讓我感到遊戲規則透明且心情踏實。'],
-      [49, 'X', -1, 'T', -0.4, '即使我個人績效年年名列前茅，大型跨國組織仍可能因為整體策略轉向或併購重組而無預警裁撤整個部門；這種「非個人過失的突發失業風險」，比前期艱苦但過關後終身穩定的考核更讓我焦慮。'],
-      [50, 'P', +1, 'M', -0.4, '如果我的核心技術貢獻常年只能化為組織內部的無名幕僚資產，外界與同儕永遠不知道背後由我主導，長期下來即便換得優渥薪資，我也會覺得自己的專業存在感正在被抹殺。'],
-      [51, 'O', -1, 'M', +0.4, '假如有個平行時空保證：不管我現在選擇離開多久，十年後我想重回傳統象徵最高智識地位的殿堂都隨時有一席之地——在這種完全免除後顧之憂的前提下，我會毫無懸念地選擇先去世俗市場爭取最高回報。'],
-      [52, 'O', +1, 'A', +0.5, '就算把薪資、審查壓力與工時全部抽離不看，「能完全由自己自由定義探索主題、甚至改寫領域經典認知」的畫面本身，依然能激發我內心最純粹且不可替代的智識熱情。'],
+// 36 道針對台灣真實處境的「殘酷二選一」去標籤盲測題 (每組6題，共6組)
+const QUESTIONS = [
+  // Group 1: 台灣本土外商 PM 化 vs. 學界審查與湊鐘點
+  { id: 1, group: 0, pAxis: 'E', sAxis: 'M', pDir: 1, sDir: -1,
+    text: '如果一個職位能給你年薪 200 萬且週五準時關機，但未來五年你再也不用自己寫高階因果推論程式，80% 時間是在幫業務部門審外包廠商的基礎報表與做 PPT，你會覺得「武功被廢很窒息」大於「領錢很爽」嗎？' },
+  { id: 2, group: 0, pAxis: 'G', sAxis: 'B', pDir: 1, sDir: 1,
+    text: '當你精心設計的高階模型被兩位明顯沒讀懂公式的匿名審查委員以荒謬理由退件，且這直接決定你今年的績效與經費生死時，這種憤怒感會毀掉你整個週末的家庭心情嗎？' },
+  { id: 3, group: 0, pAxis: 'S', sAxis: 'B', pDir: 1, sDir: 1,
+    text: '為了湊滿機構規定的每週基本授課時數與服務指標，你必須每學期向上百位對數理毫無興趣的大學生講授基礎統計，並幫不熟統計的臨床人員處理初階 p-value 疑問，這會讓你產生強烈的職業倦怠嗎？' },
+  { id: 4, group: 0, pAxis: 'H', sAxis: 'T', pDir: 1, sDir: 1,
+    text: '當你的頂刊代表作已經超越多數在職前輩，機構卻因為「上面還沒開缺、前面還有學長排隊」而暗示你先領每月 6 萬的過渡職銜等一兩年，你會感到強烈反胃想立刻翻桌走人嗎？' },
+  { id: 5, group: 0, pAxis: 'A', sAxis: 'E', pDir: -1, sDir: 1,
+    text: '比起「沒有任何資源、必須自己無中生有去想題目寫計畫找錢」，你其實更喜歡「組織已經買好頂級跨國資料庫並指定要釐清某個具體藥物問題，由你專心負責設計最頂級的統計架構」嗎？' },
+  { id: 6, group: 0, pAxis: 'B', sAxis: 'P', pDir: 1, sDir: -1,
+    text: '如果為了維持每年 2-3 篇第一/通訊作者的公開頂刊發表，代價是未來十年你的寒暑假與週末晚上都必須在書房改稿與寫計畫，你寧可放棄公開掛名、換取下班後完全屬於家人的自由嗎？' },
 
-      // --- V5.1 NEW EXPANSION: ROBERT PLATT REAL-WORLD DIMENSIONS (Q53 - Q60) ---
-      [53, 'A', -1, 'T', +0.5, '當組織要求我必須持續自籌外部競爭型經費來支應自己的薪資與團隊開銷，一旦經費中斷就面臨減薪或斷糧，且體制完全不接受「整體環境緊縮非戰之罪」的辯解時，這種全靠自己拉贊助的創業家孤獨壓力會讓我產生生理性的排斥。'],
-      [54, 'E', +1, 'S', +0.5, '比起隨著年資晉升把大部分精力花在「替實驗室找錢發薪水、指導初學者作業與處理團隊人事雜務」，我更享受親自推導因果推論數學證明、深入優化演算法與動手寫代碼的純粹科學樂趣。'],
-      [55, 'G', +1, 'X', +0.4, '即使個人在專業上已經相當成功，若一個體系的常態依然是「花費數月心血撰寫的核心提案與成果，仍有超過六七成機率會被匿名把關者駁回退件」，在未來十到十五年裡持續處於這種高頻受挫的循環，會讓我嚴重懷疑自我價值的消耗方式。'],
-      [56, 'M', +1, 'P', -0.4, '我並不認同「只有待在傳統學研殿堂才具備崇高的社會價值」；只要我的實證推論能對公眾健康產生實質貢獻，無論是改變國家給付法規還是推動救命新藥上市，其看得見的立竿見影實務回報（ROI），遠比鎖在象牙塔裡等待多年後被少數人引用的論文更讓我踏實。'],
-      [57, 'O', -1, 'X', +0.5, '我深知專業體系具有強大的「軌道慣性」——在某個環境待超過三年後再想轉型，代價將極為高昂。因此在面臨重大分水嶺時，我寧可及早邁入高流動性、高變現的大市場，也絕不順著學生的慣性在不滿意的過渡環境裡多耗兩三年。'],
-      [58, 'T', -1, 'A', -0.4, '面對生態光譜的抉擇：一端是「如果成功擁有一切光環，如果不順則經費迷惘、雜務纏身、收入偏低的雙峰兩極分化」；另一端是「雖然沒有環遊世界的光采，但組織提供穩定硬體預算、薪資波動極低」的體系。我更傾向後者帶來的長期心理安全感。'],
-      [59, 'S', +1, 'A', -0.4, '在帶領專案時，比起作為「孤獨的獨立開拓者」、在身邊缺乏懂我技術的同儕環境下一人承擔全部成敗，我更渴望身處一個各司其職的高水準專家矩陣（有法規、臨床、統計專家共同進退），享受平起平坐的協同力量。'],
-      [60, 'G', +1, 'M', +0.4, '如果一個體系表面上給了我正式職位或長期合約，但高層根本不重視我的專業領域、也不願投注資源支持我發揮，這種「被放在冷板凳上虛度黃金歲月」的痛苦，遠大於在充滿競爭但給足資源的市場中拼搏。']
-    ];
+  // Group 2: 乙方顧問高壓跨時區 vs. 體制內溫水煮青蛙
+  { id: 7, group: 1, pAxis: 'B', sAxis: 'E', pDir: 1, sDir: -1,
+    text: '假設你在一個能天天操作全球頂級資料庫、與歐美一流生統專家平起平坐的方法學團隊，但代價是每週有三晚必須在 21:00–23:00 開跨時區會議，且專案必須精確按小時填寫計費工時（Billable hours），你能長期忍受嗎？（選5代表極度排斥晚間開會與工時監控）' },
+  { id: 8, group: 1, pAxis: 'M', sAxis: 'O', pDir: 1, sDir: -1,
+    text: '看著能力與發表都不如你的同儕，進入商業機構三年後年薪突破 250 萬並快速累積 ETF 部位，而你雖然擁有崇高的體制內頭銜卻領著固定死薪水，這會讓你產生強烈的相對剝奪感嗎？' },
+  { id: 9, group: 1, pAxis: 'X', sAxis: 'G', pDir: 1, sDir: 1,
+    text: '一想到自己的職涯如果綁定在台灣極小的單一專業圈子裡，一旦跟少數幾位大老關係生變或派系失勢就無處可去，這種「沒有隨時跳槽逃離自由」的封閉感會讓你恐慌嗎？' },
+  { id: 10, group: 1, pAxis: 'R', sAxis: 'E', pDir: 1, sDir: 1,
+    text: '當你用最嚴謹的 Target Trial Emulation 跑出藥物療效為 Null（無顯著差異），但內部商業團隊希望你「換個次族群定義或縮短觀察期」讓數據看起來比較漂亮時，你會堅持科學底線拒絕配合嗎？' },
+  { id: 11, group: 1, pAxis: 'S', sAxis: 'A', pDir: 1, sDir: -1,
+    text: '你內心深處其實一點都不想當「傳道授業的恩師」，如果可以選擇，你寧可一輩子當個不必管底層新手死活、只需對自己產出負責的「高薪獨行俠專家（Individual Contributor）」嗎？' },
+  { id: 12, group: 1, pAxis: 'O', sAxis: 'T', pDir: 1, sDir: -1,
+    text: '如果現在簽下一份工作，意味著你三年後就很難再回到傳統大學應徵專任教職（單向閥關閉），即使這份工作起薪較高，你心裡仍會因為「失去回流象牙塔的後路」而感到焦慮嗎？' },
 
-    // =========================================================================
-    // 3. SIX CAREER PATHWAYS WITH IDEAL 12-D DIRECTION VECTORS
-    // Vector order: [G, M, E, A, T, S, B, P, X, O, H, R] in [-1, +1]
-    // =========================================================================
-    const PATHWAYS = [
-      {
-        id: 'pharma_rwe',
-        name: '跨國藥廠 Global / Regional RWE & 流行病學科學家',
-        tag: '黃金雙棲解方（甲方科學家）',
-        vec: [+0.85, +0.85, +0.60, -0.25, +0.85, +0.85, +0.75, +0.40, +0.85, +0.30, +0.70, -0.50],
-        desc: '免除手把手帶基礎學生的消耗與軟性經費斷糧壓力，以「甲方策略制定者」身分掌握預算，領取跨國藥廠高額底薪＋獎金＋RSU 補償世俗枷鎖；同時在 Global/Regional 團隊保有高階因果推論深度與頂刊發表空間，兼顧資本與科學尊嚴。'
-      },
-      {
-        id: 'intl_aro',
-        name: '國際頂尖 ARO / 跨國策略顧問方法學負責人 (IQVIA / Evidera / Analysis Group)',
-        tag: '高變現技術實戰派',
-        vec: [+0.80, +0.90, +0.45, -0.45, +0.90, +0.85, +0.40, -0.15, +0.90, -0.35, +0.80, -0.75],
-        desc: '身邊全是博士級流行病學家與專職統計分析師，完全免除學術審查黑箱與教職行政雜務，專攻高單價跨國資料庫與法規送件專案。薪資成長陡峭且全球跳槽自由度高，但需接受科學分析高度服膺商業目標與客戶導向。'
-      },
-      {
-        id: 'fellowship_bridge',
-        name: '歐美頂尖學研重鎮 / 跨國藥廠聯合 Fellowship (1–2 年策略跳板)',
-        tag: '破除單向閥的國際跳板',
-        vec: [+0.35, +0.25, +0.90, +0.45, +0.20, +0.55, +0.30, +0.85, +0.65, +0.85, -0.40, +0.30],
-        desc: '針對深層擔憂「單向閥後路（O軸高分）」者的過渡策略：赴歐美頂尖藥學/流病重鎮 1–2 年，完成指引級代表作並取得產學人脈，藉此空降藥廠高階或保留學界回流籌碼。但需自願接受短期制度性過渡身分與學徒制 (H軸)。'
-      },
-      {
-        id: 'healthtech_exec',
-        name: '生醫創投 / 醫療 AI 與真實世界數據策略總監 (Biotech / Healthtech)',
-        tag: '極致商業與股權槓桿',
-        vec: [+0.95, +0.95, -0.25, +0.30, +0.95, +0.80, +0.50, -0.75, +0.95, -0.80, +0.90, -0.90],
-        desc: '完全脫離傳統學術發表與同儕審查框架，將量化分析直接轉化為產品商業價值與估值槓桿，適合徹底看淡個人論文掛名、追求最大現金流與股權自由度者。'
-      },
-      {
-        id: 'public_inst',
-        name: '國家級研究機構 / 醫學中心臨床大數據專職研究員 (或監管機構專家)',
-        tag: '體制內研究緩衝帶',
-        vec: [-0.45, -0.45, +0.65, +0.45, -0.45, -0.20, -0.20, +0.70, -0.55, +0.60, -0.30, +0.55],
-        desc: '波動性低（低變異數），免除大學部大量教學負擔，專注大型醫療資料庫研究；薪資受公家薪級表限制，但具備直接影響國家公衛政策的立竿見影實質回報。'
-      },
-      {
-        id: 'tenure_prof',
-        name: '傳統頂尖大學專任教職 (Tenure-Track Assistant Professor)',
-        tag: '傳統學術錦標賽',
-        vec: [-0.95, -0.90, +0.85, +0.95, -0.90, -0.95, -0.85, +0.95, -0.90, +0.90, -0.90, +0.95],
-        desc: '享有最高議題定義自主權與師徒傳承成就感；但前期必須全面承受同行匿名審稿、軟性經費自籌生存壓力、無邊界工時以及從研究員異化為募資經理的轉型考驗。'
-      }
-    ];
+  // Group 3: 軟性經費生存戰 vs. 商業組織齒輪
+  { id: 13, group: 2, pAxis: 'G', sAxis: 'M', pDir: 1, sDir: 1,
+    text: 'Robert Platt 教授指出：在體制內當獨立主持人，本質上是「必須自己找錢發薪水給助理的自負盈虧創業家」。你對於每年都要煩惱「明年實驗室經費從哪裡來」感到極度厭煩嗎？' },
+  { id: 14, group: 2, pAxis: 'P', sAxis: 'M', pDir: 1, sDir: -1,
+    text: '如果一份耗費你半年心血設計的跨國真實世界研究，最終只會變成公司內部提交給法規單位的機密報告，永遠不會出現在 PubMed 上讓同行看見你的名字，你會覺得心血白費嗎？' },
+  { id: 15, group: 2, pAxis: 'E', sAxis: 'T', pDir: 1, sDir: -1,
+    text: '在面對一個實務問題時，如果長官說「我們不需要花兩個月做複雜的 Proximal Causal Inference，用最簡單的傾向分數配對在三天內交出粗略結果就好」，你會感到智識上的憋屈嗎？' },
+  { id: 16, group: 2, pAxis: 'B', sAxis: 'H', pDir: 1, sDir: 1,
+    text: '對於下班時間或休假日還會收到主管、合作醫師或行政人員傳來的 Line 交辦事項（例如臨時要補評鑑報表或改統計圖表），你的容忍度極低嗎？' },
+  { id: 17, group: 2, pAxis: 'X', sAxis: 'O', pDir: 1, sDir: -1,
+    text: '你認為真正的「45 歲中年安全感」，來自於手握 3,000 萬隨時可變現的全球 ETF 資產與跨國通用技能，而非依附在某個號稱不會倒的國立機構編制內嗎？' },
+  { id: 18, group: 2, pAxis: 'R', sAxis: 'P', pDir: -1, sDir: -1,
+    text: '只要研究方法本身沒有造假，你其實很樂意讓自己的數據分析能力直接服務於藥廠的新藥上市、健保給付談判與商業定價策略，並不覺得這樣比純學術研究低等嗎？（選5代表高度認同商業價值，即低R）' },
 
-    // =========================================================================
-    // 4. STATE & UI RENDERING LOGIC (10 questions per page, 6 pages)
-    // =========================================================================
-    const state = {};
-    QUESTIONS.forEach(q => {
-      state[q[0]] = { s: 3, w: 1 };
+  // Group 4: 人際政治、導師依賴與自我推銷
+  { id: 19, group: 3, pAxis: 'G', sAxis: 'H', pDir: 1, sDir: 1,
+    text: '在決定誰能拿到稀缺職位時，如果機構看重的是「誰在裡面蹲得久、誰跟高層派系關係好」，而不是直接比拚「誰的 JAMA 等級頂刊硬實力強」，你會對這種環境徹底心寒嗎？' },
+  { id: 20, group: 3, pAxis: 'S', sAxis: 'E', pDir: 1, sDir: 1,
+    text: '當你發現自己每天花在「替初學者除錯低級 Code、處理行政核銷、協調跨科部雜務」的時間超過 60%，而真正留給自己思考高階方法學的時間不到 10% 時，你會想立刻逃離嗎？' },
+  { id: 21, group: 3, pAxis: 'T', sAxis: 'M', pDir: 1, sDir: 1,
+    text: '為了啟動你的「低利增貸＋ETF 複利」財富自由引擎，你在博士畢業後的前三年就極度需要穩定且高水準的自由現金流，完全不想再經歷任何「低薪累積期」嗎？' },
+  { id: 22, group: 3, pAxis: 'A', sAxis: 'R', pDir: 1, sDir: 1,
+    text: '如果一生都不能自己決定「我要研究什麼疾病與哪個暴露因子」，永遠只能接手組織上層根據產品線分配下來的指定課題，你會覺得喪失了身為學者的靈魂嗎？' },
+  { id: 23, group: 3, pAxis: 'P', sAxis: 'O', pDir: 1, sDir: 1,
+    text: '在參加國際研討會（如 ISPE）時，如果名片上印的是某家商業機構或顧問公司，而不是某頂尖大學醫學院教授，你心裡會有一絲矮人一截的失落感嗎？' },
+  { id: 24, group: 3, pAxis: 'X', sAxis: 'B', pDir: 1, sDir: 1,
+    text: '即使住在台南自用住宅非常舒適，但如果某個在台北（或需每週北上兩天）的跨國職位能給你兩倍的職涯成長與視野，你願意為了打破地域封閉性而承受通勤成本嗎？' },
+
+  // Group 5: 家庭邊界、中年危機與真實妥協
+  { id: 25, group: 4, pAxis: 'M', sAxis: 'G', pDir: 1, sDir: 1,
+    text: '既然任何工作都免不了要受氣與看人臉色，你認為「在商業機構拿 250 萬受老闆的氣」，遠比「在體制內拿 150 萬還要受國科會審查委員與評鑑行政的氣」划算太多了嗎？' },
+  { id: 26, group: 4, pAxis: 'H', sAxis: 'O', pDir: 1, sDir: -1,
+    text: '面對一個「連缺額都還沒正式設立、需要等半年以上行政審批」的體制內機會，你寧可現在主動出擊敲開確定性高的業界職缺，也不願為了等那個位置而把自己晾在原地當備胎嗎？' },
+  { id: 27, group: 4, pAxis: 'E', sAxis: 'S', pDir: 1, sDir: 1,
+    text: '在合作專案中，如果臨床合作者（如醫院主治醫師）完全不懂因果推論，只把你當成「幫他把 p-value 跑顯著的高級計算機」，你會感到極度受辱並拒絕這種合作模式嗎？' },
+  { id: 28, group: 4, pAxis: 'B', sAxis: 'T', pDir: 1, sDir: 1,
+    text: '你之所以追求提早財富自由（FIRE），核心目的根本不是為了買奢華名車，而是為了能早日對任何不合理的工作要求說「不」，把時間 100% 留給家庭、旅遊與個人興趣嗎？' },
+  { id: 29, group: 4, pAxis: 'R', sAxis: 'M', pDir: -1, sDir: 1,
+    text: '如果台灣本地外商的職缺必須兼做一部分 Medical Affairs 的跨部門溝通與簡報，只要薪資到位且尊重你的專業判斷，你願意適度收斂自己的「純方法學潔癖」、學習商業溝通語言嗎？（選5代表願意務實妥協）' },
+  { id: 30, group: 4, pAxis: 'O', sAxis: 'P', pDir: -1, sDir: -1,
+    text: '你是否真心認同：只要手握已發表的 JAMA Internal Medicine 等級代表作，你就已經證明了自己的學術高度，未來人生不再需要靠「拿到大學專任教授聘書」來向任何人證明自己？（選5代表完全不需要教職證明自己）' },
+
+  // Group 6: 終極攤牌情境題
+  { id: 31, group: 5, pAxis: 'G', sAxis: 'A', pDir: 1, sDir: -1,
+    text: '在體制內「必須花 40% 時間寫計畫求經費、應付教評會與國科會」，對比在業界「經費與資料由公司準備好，但你必須按季交付符合公司策略目標的分析報告」，你毫不猶豫選擇後者嗎？' },
+  { id: 32, group: 5, pAxis: 'S', sAxis: 'H', pDir: 1, sDir: 1,
+    text: '一想到如果接下教職，未來六年除了自己發論文，還得扛起「把零基礎碩士生訓練到能畢業」以及「每年湊滿授課鐘點」的強制義務，你就覺得頭皮發麻嗎？' },
+  { id: 33, group: 5, pAxis: 'X', sAxis: 'M', pDir: 1, sDir: 1,
+    text: '如果留在原本的學術圈意味著你的天花板與人脈永遠受制於指導教授的羽翼，你寧可冒著一開始只認識 3-4 個人的陌生風險，也要親手在產業界開闢屬於自己的獨立人脈網嗎？' },
+  { id: 34, group: 5, pAxis: 'B', sAxis: 'O', pDir: 1, sDir: -1,
+    text: '當伴侶或長輩因為「大學教授聽起來很穩定體面」而期待你選教職，但你清楚知道那種慢性加班與升等壓力會侵蝕你的身心與家庭品質時，你有勇氣堅持自己對生活邊界的判斷嗎？' },
+  { id: 35, group: 5, pAxis: 'E', sAxis: 'P', pDir: 1, sDir: 1,
+    text: '即便進入產業界，你依然強烈渴望所屬團隊擁有發表方法學論文（或參與 ISPE 國際工作組）的空間，若一個職位徹底禁止任何對外學術發表且完全不用統計模型，你會在兩年內離職嗎？' },
+  { id: 36, group: 5, pAxis: 'T', sAxis: 'H', pDir: 1, sDir: 1,
+    text: '總結此時此刻的直覺：在「等待明年二月不確定的醫學系新設教職」與「現在立刻出擊爭取跨國業界（含駐台遠端或外商）高薪正職」之間，你的本能更傾向立刻掌握自己能控制的業界主動權嗎？' }
+];
+
+// 台灣真實存在的 6 個殘酷折衷賽道 (定義 12 維理想目標向量 0~100)
+const TRACKS = [
+  {
+    id: 'aro_remote',
+    name: '1. 跨國頂尖 ARO / 藥廠駐台 Global 方法學家 (IQVIA / Evidera / 遠端 Hub)',
+    tag: '技術與居住地雙保・但需扛乙方工時與跨時區晚間會議',
+    pros: '真正發揮 TTE/高階因果推論、可談混合/台南遠端辦公、純技術職級可升 Principal/AD',
+    cons: '需配合歐美時差開晚間會議（衝擊 B 軸）、乙方專案計費工時緊湊、職缺需自己主動私下敲門挖掘',
+    vec: { G: 82, M: 75, E: 85, A: 30, T: 75, S: 85, B: 55, P: 60, X: 80, O: 35, H: 75, R: 50 },
+    gravityPenalty: (geo, acadProb, hustle) => {
+      // 不需去美國(geo影響小)，但高度依賴自己主動敲門(hustle)
+      const hustleFactor = 0.65 + 0.35 * (hustle / 100);
+      return hustleFactor;
+    }
+  },
+  {
+    id: 'tw_mnc_local',
+    name: '2. 台灣本土外商藥廠 Medical Affairs / HEOR / RWE Manager',
+    tag: '高薪準時下班・但高階統計武功廢除（PM 化）且需雙城通勤',
+    pros: '起薪穩（160-200萬+）、週五準時關機無升等壓力（高 B）、徹底擺脫國科會審查（高 G）',
+    cons: '幾乎不自己寫高階模型（多為發包 PM 與做簡報，違背 E 軸）、純技術職在台難升 AD、多需台北通勤或租屋',
+    vec: { G: 85, M: 72, E: 30, A: 25, T: 80, S: 75, B: 85, P: 30, X: 75, O: 25, H: 70, R: 25 },
+    gravityPenalty: (geo, acadProb, hustle) => {
+      // 若鎖死台南不願通勤台北(geo極高)會扣分，且需一定主動求職力
+      const geoCommutePenalty = geo > 80 ? 0.85 : 0.95;
+      const hustleFactor = 0.70 + 0.30 * (hustle / 100);
+      return geoCommutePenalty * hustleFactor;
+    }
+  },
+  {
+    id: 'ncku_med_faculty',
+    name: '3. 成大/頂大醫學系「新設生物統計」專任助理教授 (免博後直上)',
+    tag: '台南主場與太太最愛頭銜・但開缺率極低且需扛教學鐘點與升等審查',
+    pros: '保住台南 2300 萬無貸房與雙薪、社會地位崇高、可接藥廠產學案賺外快、無中年裁員風險',
+    cons: '二月能否順利設缺並贏過博後學長充滿變數、第4年起需湊滿18鐘點、長年受國科會審查(G)與升等無休(B)折磨',
+    vec: { G: 20, M: 35, E: 70, A: 70, T: 40, S: 25, B: 25, P: 90, X: 30, O: 85, H: 45, R: 80 },
+    gravityPenalty: (geo, acadProb, hustle) => {
+      // 雖然完美契合鎖死台南(geo)，但受制於二月開缺與排位真實機率(acadProb)
+      const probFactor = 0.45 + 0.55 * (acadProb / 100);
+      return probFactor;
+    }
+  },
+  {
+    id: 'us_global_hq',
+    name: '4. 破釜沉舟赴美：跨國藥廠總部 Global RWE (如 Amgen CfOR 總部)',
+    tag: '方法學與高薪的終極理想鄉・但直接引爆家庭與伴侶拒赴美危機',
+    pros: '100% 契合你的高階方法學(E)、不帶學生(S)、下班關機(B)與頂級薪資職級(AD/Director)',
+    cons: '太太已明確表態不去美國（家庭破裂或單身赴任風險）、放棄台南無貸款房與藥師雙薪基本盤',
+    vec: { G: 88, M: 90, E: 90, A: 35, T: 80, S: 90, B: 82, P: 55, X: 85, O: 30, H: 80, R: 45 },
+    gravityPenalty: (geo, acadProb, hustle) => {
+      // 直接受制於家庭地理鎖死度(geo)
+      const familyVeto = 1 - 0.75 * (geo / 100);
+      return familyVeto;
+    }
+  },
+  {
+    id: 'tw_data_center',
+    name: '5. 醫學中心臨床大數據中心 / 國家級研究機構專職研究員',
+    tag: '體制內免教學緩衝帶・但薪資死板且仍受計畫經費與院內政治制約',
+    pros: '可留在台灣/台南、不必扛大學部大量授課、專注資料庫分析與論文發表',
+    cons: '薪資天花板鎖死（難敵業界）、仍需配合臨床大老或軟性經費指標、升遷管道狹窄',
+    vec: { G: 40, M: 35, E: 72, A: 45, T: 45, S: 55, B: 55, P: 75, X: 40, O: 70, H: 40, R: 65 },
+    gravityPenalty: (geo, acadProb, hustle) => 0.82
+  },
+  {
+    id: 'postdoc_wait',
+    name: '6. 留在原實驗室蹲「博士後研究員」排隊等教職開缺',
+    tag: '零陌生開發風險的舒適圈陷阱・但徹底違背你的變現與形式門檻底線',
+    pros: '不用面對陌生求職恐懼、繼續待在熟悉的台南實驗室與指導教授羽翼下',
+    cons: '手握 JAMA Intern Med 卻領 6 萬博後薪水（引爆 H 軸與 M 軸）、幫老師扛雜務與帶學弟妹（引爆 S 軸）、沉沒成本極高',
+    vec: { G: 15, M: 10, E: 65, A: 30, T: 10, S: 20, B: 20, P: 80, X: 15, O: 90, H: 5, R: 75 },
+    gravityPenalty: (geo, acadProb, hustle) => 0.75
+  }
+];
+
+let answers = {}; // id -> 1..5
+let weights = {}; // id -> 1, 2, 3
+let currentGroup = 0;
+let radarChartInstance = null;
+
+function init() {
+  QUESTIONS.forEach(q => {
+    weights[q.id] = 1;
+  });
+  // 預設載入你的前次心理基準，讓你一打開就能看到真實對比
+  loadBrianPreset(false);
+}
+
+// 根據你前次 v5.1 的真實傾向，映射至這 36 題的預設作答
+function loadBrianPreset(showNotice = true) {
+  const preset = {
+    1: 4, 2: 5, 3: 5, 4: 5, 5: 4, 6: 4,
+    7: 4, 8: 4, 9: 5, 10: 4, 11: 5, 12: 2,
+    13: 5, 14: 3, 15: 4, 16: 5, 17: 4, 18: 4,
+    19: 5, 20: 5, 21: 4, 22: 2, 23: 2, 24: 4,
+    25: 4, 26: 4, 27: 5, 28: 5, 29: 4, 30: 4,
+    31: 5, 32: 5, 33: 4, 34: 4, 35: 4, 36: 4
+  };
+  answers = { ...preset };
+  // 標記幾題你的核心痛點為 2x 權重
+  [2, 3, 4, 13, 16, 20, 28, 31, 32].forEach(id => weights[id] = 2);
+  renderTabs();
+  renderQuestions();
+  recalculateAll();
+  if (showNotice) showToast('已載入你的真實心理基準向量！');
+}
+
+function resetAll() {
+  answers = {};
+  QUESTIONS.forEach(q => weights[q.id] = 1);
+  renderTabs();
+  renderQuestions();
+  recalculateAll();
+  showToast('已重置全卷為未作答狀態');
+}
+
+function renderTabs() {
+  const groupNames = [
+    '組1：PM化 vs 湊鐘點',
+    '組2：跨時區 vs 溫水蛙',
+    '組3：軟經費 vs 商業齒輪',
+    '組4：派系排隊 vs 實戰',
+    '組5：家庭邊界 vs 妥協',
+    '組6：終極攤牌抉擇'
+  ];
+  const container = document.getElementById('group-tabs');
+  container.innerHTML = groupNames.map((name, idx) => {
+    const active = idx === currentGroup;
+    return `<button onclick="selectGroup(${idx})" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+      active ? 'bg-indigo-600 text-white shadow' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+    }">${name}</button>`;
+  }).join('');
+}
+
+function selectGroup(idx) {
+  currentGroup = idx;
+  renderTabs();
+  renderQuestions();
+}
+
+function changeGroup(delta) {
+  const next = currentGroup + delta;
+  if (next >= 0 && next < 6) {
+    selectGroup(next);
+    window.scrollTo({ top: 220, behavior: 'smooth' });
+  }
+}
+
+function setAnswer(qid, val) {
+  answers[qid] = val;
+  renderQuestions();
+  recalculateAll();
+}
+
+function cycleWeight(qid) {
+  weights[qid] = weights[qid] === 3 ? 1 : weights[qid] + 1;
+  renderQuestions();
+  recalculateAll();
+}
+
+function renderQuestions() {
+  const container = document.getElementById('questions-container');
+  const groupQs = QUESTIONS.filter(q => q.group === currentGroup);
+
+  const labels = [
+    { v: 1, text: '1 強烈反對' },
+    { v: 2, text: '2 偏向反對' },
+    { v: 3, text: '3 中立難決' },
+    { v: 4, text: '4 偏向認同' },
+    { v: 5, text: '5 強烈認同' }
+  ];
+
+  container.innerHTML = groupQs.map(q => {
+    const ans = answers[q.id];
+    const w = weights[q.id] || 1;
+    const wBadgeClass = w === 3 ? 'bg-rose-600 text-white border-rose-400' :
+                        w === 2 ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' :
+                                  'bg-slate-800 text-slate-400 border-slate-700';
+    return `
+      <div class="p-4 rounded-xl bg-slate-950/70 border ${ans ? 'border-slate-800' : 'border-amber-500/40'}">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div class="text-sm text-slate-200 font-medium leading-relaxed">
+            <span class="text-indigo-400 font-mono font-bold mr-1.5">Q${q.id}.</span>${q.text}
+          </div>
+          <span onclick="cycleWeight(${q.id})" class="weight-badge shrink-0 px-2.5 py-1 rounded border text-[11px] font-bold ${wBadgeClass}" title="點擊切換權重 (1x / 2x / 3x紅線)">
+            ${w}x ${w === 3 ? '紅線' : w === 2 ? '重要' : '權重'}
+          </span>
+        </div>
+        <div class="grid grid-cols-5 gap-2">
+          ${labels.map(lb => {
+            const selected = ans === lb.v;
+            const btnStyle = selected
+              ? 'bg-indigo-600 text-white border-indigo-400 font-bold shadow-md'
+              : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border-slate-800';
+            return `<button onclick="setAnswer(${q.id}, ${lb.v})" class="option-btn py-2 px-1 rounded-lg border text-xs ${btnStyle}">
+              ${lb.text}
+            </button>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('group-indicator').innerText = `第 ${currentGroup + 1} / 6 組`;
+  document.getElementById('btn-prev').disabled = currentGroup === 0;
+  document.getElementById('btn-next').disabled = currentGroup === 5;
+  document.getElementById('progress-text').innerText = `${Object.keys(answers).length} / ${QUESTIONS.length}`;
+}
+
+function updateGravity() {
+  const geo = document.getElementById('slider-geo').value;
+  const acadProb = document.getElementById('slider-acad-prob').value;
+  const hustle = document.getElementById('slider-hustle').value;
+
+  document.getElementById('val-geo').innerText = `${geo}%`;
+  document.getElementById('val-acad-prob').innerText = `${acadProb}%`;
+  document.getElementById('val-hustle').innerText = `${hustle}%`;
+
+  recalculateAll();
+}
+
+function recalculateAll() {
+  // 1. 計算 12 維度分數 (50% 為嚴格中立)
+  const axisScores = {};
+  Object.keys(AXES).forEach(k => { axisScores[k] = { num: 0, den: 0 }; });
+
+  QUESTIONS.forEach(q => {
+    const val = answers[q.id] !== undefined ? answers[q.id] : 3;
+    const centered = (val - 3) / 2; // -1 to +1
+    const w = weights[q.id] || 1;
+
+    // 主軸權重 1.0, 次軸權重 0.45
+    axisScores[q.pAxis].num += centered * q.pDir * w * 1.0;
+    axisScores[q.pAxis].den += w * 1.0;
+
+    axisScores[q.sAxis].num += centered * q.sDir * w * 0.45;
+    axisScores[q.sAxis].den += w * 0.45;
+  });
+
+  const userVec = {};
+  Object.keys(AXES).forEach(k => {
+    const ratio = axisScores[k].den > 0 ? axisScores[k].num / axisScores[k].den : 0;
+    userVec[k] = Math.round((50 + ratio * 50) * 10) / 10;
+  });
+
+  // 2. 取得現實重力參數
+  const geo = parseFloat(document.getElementById('slider-geo').value);
+  const acadProb = parseFloat(document.getElementById('slider-acad-prob').value);
+  const hustle = parseFloat(document.getElementById('slider-hustle').value);
+
+  // 3. 計算六大賽道的「純心理契合度 (Raw Fit)」與「現實重力校正效用 (Real Expected Utility)」
+  const results = TRACKS.map(t => {
+    // 零中心化餘弦相似度 + 距離混合計分
+    let dot = 0, normU = 0, normT = 0, sqDiff = 0;
+    const keys = Object.keys(AXES);
+    keys.forEach(k => {
+      const u = userVec[k] - 50;
+      const v = t.vec[k] - 50;
+      dot += u * v;
+      normU += u * u;
+      normT += v * v;
+      sqDiff += Math.pow(userVec[k] - t.vec[k], 2);
     });
+    const cos = (normU > 0 && normT > 0) ? dot / (Math.sqrt(normU) * Math.sqrt(normT)) : 0;
+    const rmse = Math.sqrt(sqDiff / keys.length); // 0..100
+    const distScore = 100 - rmse;
+    const cosScore = 50 + cos * 50;
+    const rawFit = Math.round((0.6 * cosScore + 0.4 * distScore) * 10) / 10;
 
-    let curPage = 0;
-    const PAGE_SIZE = 10;
-    const TOTAL_PAGES = Math.ceil(QUESTIONS.length / PAGE_SIZE);
-    let barChartInstance = null;
+    const penalty = t.gravityPenalty(geo, acadProb, hustle);
+    const realUtility = Math.round(rawFit * penalty * 10) / 10;
 
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      document.getElementById('toast-msg').textContent = msg;
-      t.classList.remove('hidden');
-      t.classList.add('toast-enter');
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => {
-        t.classList.add('hidden');
-      }, 2600);
-    }
+    return { ...t, rawFit, realUtility, penalty };
+  });
 
-    function updateProgressBadge() {
-      const nonNeutral = QUESTIONS.filter(q => state[q[0]].s !== 3).length;
-      const el = document.getElementById('answered-badge');
-      el.textContent = `${nonNeutral} / ${QUESTIONS.length} 題已分化 (${QUESTIONS.length - nonNeutral} 題中立)`;
-    }
+  const byRaw = [...results].sort((a, b) => b.rawFit - a.rawFit);
+  const byReal = [...results].sort((a, b) => b.realUtility - a.realUtility);
 
-    function renderPageTabs() {
-      const container = document.getElementById('page-tabs');
-      let html = '';
-      for (let p = 0; p < TOTAL_PAGES; p++) {
-        const isCurrent = (curPage === p && !document.getElementById('quiz-view').classList.contains('hidden'));
-        const cls = isCurrent
-          ? 'bg-blue-600 text-white shadow-sm'
-          : 'bg-slate-100 text-slate-600 hover:bg-slate-200';
-        const startIdx = p * PAGE_SIZE + 1;
-        const endIdx = Math.min((p + 1) * PAGE_SIZE, QUESTIONS.length);
-        html += `
-          <button onclick="goToQuizPage(${p})" class="px-2.5 py-1.5 text-xs font-extrabold rounded-xl transition ${cls}">
-            第 ${p + 1} 組 (Q${startIdx}–${endIdx})
-          </button>
-        `;
-      }
-      const isRes = !document.getElementById('results-view').classList.contains('hidden');
-      html += `
-        <button onclick="switchMainView('results')" class="px-3.5 py-1.5 text-xs font-extrabold rounded-xl transition ${isRes ? 'bg-emerald-600 text-white shadow-sm' : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'}">
-          📊 診斷報告與 AI 提示詞
-        </button>
-      `;
-      container.innerHTML = html;
-      updateProgressBadge();
-    }
+  // 更新頂部卡片
+  document.getElementById('top-raw-title').innerText = byRaw[0].name.replace(/^\d+\.\s*/, '');
+  document.getElementById('top-raw-score').innerText = `${byRaw[0].rawFit}%`;
 
-    function renderQuestionsList() {
-      renderPageTabs();
-      const start = curPage * PAGE_SIZE;
-      const slice = QUESTIONS.slice(start, start + PAGE_SIZE);
-      const optLabels = [
-        '1 完全不符合',
-        '2 偏向不符合',
-        '3 中立 / 難取捨',
-        '4 偏向符合',
-        '5 完全符合我'
-      ];
+  document.getElementById('top-real-title').innerText = byReal[0].name.replace(/^\d+\.\s*/, '');
+  document.getElementById('top-real-score').innerText = `${byReal[0].realUtility}%`;
 
-      const listEl = document.getElementById('questions-list');
-      listEl.innerHTML = slice.map(q => {
-        const id = q[0];
-        const text = q[5];
-        const cur = state[id];
+  // 計算最大認知失調
+  const medTrack = results.find(r => r.id === 'ncku_med_faculty');
+  if (medTrack.rawFit < 42 && acadProb >= 40) {
+    document.getElementById('dissonance-title').innerText = '⚠️ 「生理排斥教職」卻「過度押注二月開缺」';
+    document.getElementById('dissonance-desc').innerText =
+      `你的心理向量對醫學系教職契合度僅 ${medTrack.rawFit}%（極度排斥審查G=${userVec.G}%、拒絕帶新手S=${userVec.S}%、要求下班關機B=${userVec.B}%），但你卻因為恐懼陌生開發業界而把希望寄託在這個缺上。`;
+  } else if (geo >= 75 && byRaw[0].id === 'us_global_hq') {
+    document.getElementById('dissonance-title').innerText = '⚠️ 「靈魂屬於歐美總部」但「肉身鎖死台灣」';
+    document.getElementById('dissonance-desc').innerText =
+      `你的純心理最契合歐美藥廠總部 (${byRaw[0].rawFit}%)，但伴侶拒絕赴美 (地理鎖死 ${geo}%)。留在台灣你必須在「方法學純粹度(選ARO)」與「生活邊界(選外商MA)」之間二選一，不能再幻想全拿。`;
+  } else {
+    document.getElementById('dissonance-title').innerText = '⚡ 「高階方法學潔癖」與「台灣本地職缺PM化」的衝突';
+    document.getElementById('dissonance-desc').innerText =
+      `你的 E軸(${userVec.E}%) 與 S軸(${userVec.S}%) 極高，直接去台灣本地外商當一般 RWE Manager 會因武功被廢而痛苦；最佳解是瞄準「駐台 Global/APAC 遠端職位或國際 ARO」。`;
+  }
 
-        const buttonsHtml = [1, 2, 3, 4, 5].map(val => `
-          <button onclick="setAnswer(${id}, ${val})" id="qbtn-${id}-${val}" class="opt-btn border rounded-xl py-2.5 px-1.5 text-center ${cur.s === val ? 'active font-extrabold' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-medium'}">
-            <div class="text-xs md:text-sm">${val}</div>
-            <div class="text-[10px] opacity-85 mt-0.5 leading-tight">${optLabels[val - 1].slice(2)}</div>
-          </button>
-        `).join('');
-
-        return `
-          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-slate-300 transition">
-            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
-              <div class="text-sm md:text-base font-bold text-slate-800 leading-relaxed">
-                <span class="inline-block bg-slate-900 text-white text-xs font-extrabold px-2 py-0.5 rounded-md mr-2 align-middle">
-                  Q${id}
-                </span>
-                <span class="align-middle">${text}</span>
-              </div>
-
-              <!-- 3-Tier Weight Selector -->
-              <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl shrink-0 self-start">
-                <button onclick="setWeight(${id}, 1)" id="wbtn-${id}-1" class="w-btn px-2 py-1 text-[11px] font-bold rounded-lg border border-transparent ${cur.w === 1 ? 'active-1' : 'text-slate-500 hover:text-slate-800'}">
-                  1x 一般
-                </button>
-                <button onclick="setWeight(${id}, 2)" id="wbtn-${id}-2" class="w-btn px-2 py-1 text-[11px] font-bold rounded-lg border border-transparent ${cur.w === 2 ? 'active-2' : 'text-slate-500 hover:text-slate-800'}">
-                  2x 重要
-                </button>
-                <button onclick="setWeight(${id}, 3)" id="wbtn-${id}-3" class="w-btn px-2 py-1 text-[11px] font-bold rounded-lg border border-transparent ${cur.w === 3 ? 'active-3' : 'text-slate-500 hover:text-slate-800'}">
-                  3x 紅線
-                </button>
-              </div>
+  // 渲染六大賽道清單 (按現實校正效用排序)
+  const tracksContainer = document.getElementById('tracks-list');
+  tracksContainer.innerHTML = byReal.map((t, idx) => {
+    const isMed = t.id === 'ncku_med_faculty';
+    return `
+      <div class="p-4 rounded-xl bg-slate-950/80 border ${idx === 0 ? 'border-amber-500/60' : isMed ? 'border-rose-500/30' : 'border-slate-800'}">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+          <div>
+            <div class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[11px] ${idx === 0 ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'}">實戰 #${idx + 1}</span>
+              ${t.name}
             </div>
-
-            <div class="grid grid-cols-5 gap-1.5 md:gap-2.5">
-              ${buttonsHtml}
-            </div>
+            <div class="text-xs text-indigo-400 mt-0.5">${t.tag}</div>
           </div>
-        `;
-      }).join('');
-
-      document.getElementById('btn-prev').disabled = (curPage === 0);
-      const startIdx = start + 1;
-      const endIdx = Math.min(start + PAGE_SIZE, QUESTIONS.length);
-      document.getElementById('page-indicator').textContent = `第 ${curPage + 1} / ${TOTAL_PAGES} 組（題目 Q${startIdx} – Q${endIdx}）`;
-      
-      const nextBtn = document.getElementById('btn-next');
-      if (curPage === TOTAL_PAGES - 1) {
-        nextBtn.textContent = '📊 完成並進入診斷報告 →';
-        nextBtn.className = 'px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-extrabold rounded-xl shadow transition';
-      } else {
-        nextBtn.textContent = '下一組題目 →';
-        nextBtn.className = 'px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-extrabold rounded-xl shadow transition';
-      }
-    }
-
-    function setAnswer(id, val) {
-      state[id].s = val;
-      for (let v = 1; v <= 5; v++) {
-        const btn = document.getElementById(`qbtn-${id}-${v}`);
-        if (btn) {
-          btn.className = `opt-btn border rounded-xl py-2.5 px-1.5 text-center ${v === val ? 'active font-extrabold' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-medium'}`;
-        }
-      }
-      updateProgressBadge();
-    }
-
-    function setWeight(id, wVal) {
-      state[id].w = wVal;
-      for (let w = 1; w <= 3; w++) {
-        const btn = document.getElementById(`wbtn-${id}-${w}`);
-        if (btn) {
-          btn.className = `w-btn px-2 py-1 text-[11px] font-bold rounded-lg border border-transparent ${w === wVal ? 'active-' + w : 'text-slate-500 hover:text-slate-800'}`;
-        }
-      }
-    }
-
-    function goToQuizPage(p) {
-      curPage = p;
-      document.getElementById('results-view').classList.add('hidden');
-      document.getElementById('quiz-view').classList.remove('hidden');
-      renderQuestionsList();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function stepPage(delta) {
-      if (curPage === TOTAL_PAGES - 1 && delta === 1) {
-        switchMainView('results');
-        return;
-      }
-      goToQuizPage(Math.max(0, Math.min(TOTAL_PAGES - 1, curPage + delta)));
-    }
-
-    function switchMainView(view) {
-      if (view === 'results') {
-        document.getElementById('quiz-view').classList.add('hidden');
-        document.getElementById('results-view').classList.remove('hidden');
-        renderPageTabs();
-        computeAndRenderDashboard();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        goToQuizPage(curPage);
-      }
-    }
-
-    function loadPreset(mode) {
-      if (mode === 'neutral') {
-        QUESTIONS.forEach(q => {
-          state[q[0]] = { s: 3, w: 1 };
-        });
-        renderQuestionsList();
-        switchMainView('results');
-        showToast('🔄 已重置全卷 60 題為中立值 (3分)，驗證全賽道嚴格等於 50.0%！');
-        return;
-      }
-
-      // 'real' preset: Deeply aligned with high-standing first-author PhD profile
-      const targetLatent = {
-        G: +0.95, M: +0.65, E: +0.70, A: +0.10, T: +0.40,
-        S: +0.65, B: +0.80, P: +0.75, X: +0.75, O: +0.60,
-        H: +0.90, R: +0.45
-      };
-
-      QUESTIONS.forEach(q => {
-        const id = q[0], ax1 = q[1], sgn1 = q[2], ax2 = q[3], sgn2 = q[4];
-        const projection = targetLatent[ax1] * sgn1 + (targetLatent[ax2] || 0) * sgn2 * 0.35;
-        let score = Math.round(3 + projection * 2);
-        score = Math.max(1, Math.min(5, score));
-        let weight = 1;
-        if (ax1 === 'G' || ax1 === 'H') weight = 3;
-        else if (ax1 === 'B' || ax1 === 'P' || ax1 === 'E') weight = 2;
-        state[id] = { s: score, w: weight };
-      });
-
-      renderQuestionsList();
-      switchMainView('results');
-      showToast('⚡ 已載入 v5.1 真實心理動力參數 (含 Robert Platt 職涯全景對照)！');
-    }
-
-    // =========================================================================
-    // 5. ZERO-CENTERED ORTHOGONAL PROJECTION ENGINE (12-D, 60 Questions)
-    // =========================================================================
-    function runPsychometricEngine() {
-      const axisKeys = Object.keys(AXES);
-      const Z = {};
-      const Pct = {};
-
-      axisKeys.forEach(k => {
-        let num = 0;
-        let den = 0;
-        QUESTIONS.forEach(q => {
-          const id = q[0];
-          const zVal = (state[id].s - 3) / 2;
-          const wVal = state[id].w === 3 ? 3.5 : (state[id].w === 2 ? 2.0 : 1.0);
-          if (q[1] === k) {
-            num += zVal * q[2] * wVal;
-            den += Math.abs(q[2]) * wVal;
-          }
-          if (q[3] === k) {
-            num += zVal * q[4] * wVal;
-            den += Math.abs(q[4]) * wVal;
-          }
-        });
-        Z[k] = den > 0 ? (num / den) : 0;
-        Pct[k] = Math.round((50 + 50 * Z[k]) * 10) / 10;
-      });
-
-      const rankedPathways = PATHWAYS.map(pw => {
-        let dotProduct = 0;
-        let l1Norm = 0;
-        axisKeys.forEach((k, idx) => {
-          dotProduct += Z[k] * pw.vec[idx];
-          l1Norm += Math.abs(pw.vec[idx]);
-        });
-        const rawProjection = l1Norm > 0 ? (dotProduct / l1Norm) : 0;
-        const fitScore = Math.round(Math.max(0, Math.min(100, 50 + 50 * rawProjection)) * 10) / 10;
-        return { ...pw, fit: fitScore };
-      }).sort((a, b) => b.fit - a.fit);
-
-      const allScores = QUESTIONS.map(q => state[q[0]].s);
-      const meanScore = allScores.reduce((a, b) => a + b, 0) / allScores.length;
-      const stdDev = Math.sqrt(allScores.reduce((acc, v) => acc + Math.pow(v - meanScore, 2), 0) / allScores.length);
-
-      const redlines = QUESTIONS.filter(q => state[q[0]].w === 3);
-      const important = QUESTIONS.filter(q => state[q[0]].w === 2);
-
-      return { Z, Pct, rankedPathways, stdDev, redlines, important };
-    }
-
-    function computeAndRenderDashboard() {
-      const { Z, Pct, rankedPathways, stdDev, redlines, important } = runPsychometricEngine();
-
-      const top1 = rankedPathways[0];
-      document.getElementById('kpi-top-path').textContent = top1.name;
-      document.getElementById('kpi-top-score').textContent = `${top1.fit.toFixed(1)}%`;
-
-      const gHTitleEl = document.getElementById('kpi-trauma-title');
-      const gHDescEl = document.getElementById('kpi-trauma-desc');
-      if (Pct.G >= 65 || Pct.H >= 65) {
-        gHTitleEl.textContent = `高反感鎖定 (G=${Pct.G.toFixed(0)}%, H=${Pct.H.toFixed(0)}%)`;
-        gHDescEl.textContent = `您對「外部黑箱審判」與「形式化過渡考核」存在排異反應；強烈渴望實質戰力與對等職位被立即承認。`;
-      } else {
-        gHTitleEl.textContent = `均衡區間 (G=${Pct.G.toFixed(0)}%, H=${Pct.H.toFixed(0)}%)`;
-        gHDescEl.textContent = `對傳統學術同儕審批與年資過渡考核具有相對平穩的心理適應力。`;
-      }
-
-      const tensionTitleEl = document.getElementById('kpi-tension-title');
-      const tensionDescEl = document.getElementById('kpi-tension-desc');
-      tensionTitleEl.textContent = `工具化 R=${Pct.R.toFixed(1)}% | 後路 O=${Pct.O.toFixed(1)}%`;
-      if (Pct.R >= 60) {
-        tensionDescEl.textContent = `⚠️ R軸偏高：無法接受科學結論被商業邏輯過度包裝或擱置。產業界中純商業導向的單位同樣會讓您感到不適，需鎖定方法學深度自主的甲方法規團隊。`;
-      } else {
-        tensionDescEl.textContent = `R軸在可受度內：能理性區分「科學推論」與「商業合規策略」，在產業界能較健康地調適角色分工。`;
-      }
-
-      const pathContainer = document.getElementById('pathways-container');
-      pathContainer.innerHTML = rankedPathways.map((pw, idx) => {
-        const isFirst = idx === 0;
-        const barColor = isFirst ? 'bg-blue-600' : (idx === 1 ? 'bg-indigo-600' : 'bg-slate-500');
-        return `
-          <div class="p-4 rounded-2xl border transition ${isFirst ? 'border-blue-600 bg-blue-50/40 shadow-sm ring-1 ring-blue-500/20' : 'border-slate-200 bg-white'}">
-            <div class="flex items-start justify-between gap-2 mb-1.5">
-              <div>
-                <span class="inline-block text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${isFirst ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'} mb-1">
-                  Rank #${idx + 1} · ${pw.tag}
-                </span>
-                <h4 class="font-extrabold text-sm md:text-base text-slate-900 leading-snug">${pw.name}</h4>
-              </div>
-              <span class="text-sm font-black shrink-0 ${isFirst ? 'text-blue-700' : 'text-slate-700'}">
-                ${pw.fit.toFixed(1)}%
-              </span>
+          <div class="flex items-center gap-4 shrink-0 text-right">
+            <div>
+              <div class="text-[10px] text-slate-500">純心理契合</div>
+              <div class="text-xs font-mono font-semibold text-slate-300">${t.rawFit}%</div>
             </div>
-            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden my-2">
-              <div class="${barColor} h-full transition-all duration-500" style="width: ${pw.fit}%"></div>
+            <div>
+              <div class="text-[10px] text-amber-400">現實校正效用</div>
+              <div class="text-base font-mono font-bold text-amber-400">${t.realUtility}%</div>
             </div>
-            <p class="text-xs text-slate-600 leading-relaxed">${pw.desc}</p>
-          </div>
-        `;
-      }).join('');
-
-      const axisKeys = Object.keys(AXES);
-      const ctx = document.getElementById('axisBarChart').getContext('2d');
-      const dataValues = axisKeys.map(k => Pct[k]);
-
-      if (barChartInstance) barChartInstance.destroy();
-      barChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: axisKeys.map(k => `${k}. ${AXES[k].name.split(' ')[0]}`),
-          datasets: [{
-            label: '心理軸線得分 (%)',
-            data: dataValues,
-            backgroundColor: dataValues.map(v => v >= 58 ? 'rgba(30, 64, 175, 0.85)' : (v <= 42 ? 'rgba(99, 102, 241, 0.75)' : 'rgba(148, 163, 184, 0.65)')),
-            borderRadius: 6,
-            barThickness: 15
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          scales: {
-            x: {
-              min: 0,
-              max: 100,
-              ticks: { stepSize: 25, callback: v => v + '%' },
-              grid: { color: '#e2e8f0' }
-            },
-            y: {
-              grid: { display: false }
-            }
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: context => {
-                  const k = axisKeys[context.dataIndex];
-                  return ` ${Pct[k].toFixed(1)}% (0%: ${AXES[k].left} | 100%: ${AXES[k].right})`;
-                }
-              }
-            }
-          }
-        }
-      });
-
-      document.getElementById('axis-legend-table').innerHTML = axisKeys.map(k => `
-        <div class="p-2 rounded-lg bg-slate-50 border border-slate-200/70">
-          <div class="flex justify-between font-bold text-slate-800">
-            <span>${k}. ${AXES[k].name.split(' ')[0]}</span>
-            <span class="${Pct[k] >= 58 ? 'text-blue-700' : (Pct[k] <= 42 ? 'text-indigo-600' : 'text-slate-500')}">${Pct[k].toFixed(1)}%</span>
-          </div>
-          <div class="text-[10px] text-slate-500 mt-0.5">
-            左(0%)：${AXES[k].left}<br/>右(100%)：${AXES[k].right}
           </div>
         </div>
-      `).join('');
+        <div class="w-full bg-slate-800 h-2 rounded-full mt-2.5 overflow-hidden flex">
+          <div class="bg-amber-500 h-full" style="width: ${t.realUtility}%"></div>
+          <div class="bg-indigo-500/40 h-full" style="width: ${Math.max(0, t.rawFit - t.realUtility)}%"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 text-xs">
+          <div class="text-emerald-300/90"><span class="font-bold">🟢 實質好處：</span>${t.pros}</div>
+          <div class="text-rose-300/90"><span class="font-bold">🔴 殘酷代價：</span>${t.cons}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 
-      const insights = [];
-      if (Pct.G >= 62 || Pct.H >= 62) {
-        insights.push(`
-          <li>
-            <strong class="text-amber-300">1. 【審批黑箱 (G=${Pct.G.toFixed(1)}%)】與【身分過渡門檻 (H=${Pct.H.toFixed(1)}%)】的雙重解構：</strong><br/>
-            數據精準剝離了兩種不同負擔：您反感的不是科學討論本身，而是「非對稱審判黑箱 (G)」以及「手握頂尖代表作卻被制度強制要求走過渡身分證明自己 (H)」。這代表強迫您經歷任何帶有「學徒試用期」性質的流程，都會引發嚴重的心理消耗。
-          </li>
-        `);
+  // 渲染 12 維度條形圖與雷達圖
+  renderAxesAndRadar(userVec);
+
+  // 渲染獨立顧問去濾鏡診斷
+  renderBrutalFeedback(userVec, byRaw, byReal, geo, acadProb, hustle);
+
+  window.latestTelemetry = { userVec, byRaw, byReal, geo, acadProb, hustle };
+}
+
+function renderAxesAndRadar(userVec) {
+  const keys = Object.keys(AXES);
+  const barsContainer = document.getElementById('axes-bars');
+  barsContainer.innerHTML = keys.map(k => {
+    const v = userVec[k];
+    const ax = AXES[k];
+    const highAlert = v >= 70 || v <= 30;
+    return `
+      <div class="text-xs">
+        <div class="flex justify-between mb-0.5">
+          <span class="font-semibold ${highAlert ? 'text-amber-300' : 'text-slate-300'}">${ax.code} ${ax.name}</span>
+          <span class="font-mono font-bold text-white">${v}%</span>
+        </div>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+          <div class="${v >= 70 ? 'bg-rose-500' : v <= 35 ? 'bg-sky-500' : 'bg-indigo-500'} h-full" style="width: ${v}%"></div>
+        </div>
+        <div class="flex justify-between text-[10px] text-slate-500 mt-0.5">
+          <span>0%: ${ax.left}</span>
+          <span>100%: ${ax.right}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  if (radarChartInstance) radarChartInstance.destroy();
+  radarChartInstance = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: keys.map(k => `${k} ${AXES[k].name.slice(0, 4)}`),
+      datasets: [
+        {
+          label: '你的深層心理向量',
+          data: keys.map(k => userVec[k]),
+          backgroundColor: 'rgba(99, 102, 241, 0.25)',
+          borderColor: '#818cf8',
+          pointBackgroundColor: '#c7d2fe',
+          borderWidth: 2
+        },
+        {
+          label: '成大醫學系教職要求向量',
+          data: keys.map(k => TRACKS.find(t => t.id === 'ncku_med_faculty').vec[k]),
+          backgroundColor: 'rgba(244, 63, 94, 0.12)',
+          borderColor: '#fb7185',
+          borderDash: [4, 4],
+          pointRadius: 2,
+          borderWidth: 1.5
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          min: 0,
+          max: 100,
+          ticks: { stepSize: 25, display: false },
+          grid: { color: 'rgba(148, 163, 184, 0.15)' },
+          angleLines: { color: 'rgba(148, 163, 184, 0.15)' },
+          pointLabels: { color: '#cbd5e1', font: { size: 10 } }
+        }
+      },
+      plugins: {
+        legend: { labels: { color: '#e2e8f0', font: { size: 11 } } }
       }
-      if (Pct.R !== undefined) {
-        insights.push(`
-          <li>
-            <strong class="text-sky-300">2. 【科學工具化耐受度 (R=${Pct.R.toFixed(1)}%)】與產業界適應指標：</strong><br/>
-            R 軸是檢驗「業界是否同樣會讓您痛苦」的核心閥值。若 R 軸顯著偏高（>65%），代表即便離開學界，進入以利潤為唯一導向或頻繁要求妥協結論的顧問公司/Biotech 同樣會窒息；若 R 軸處於中溫區，則跨國藥廠 Global/Regional 具法規級嚴謹度的科學家職缺將是極佳平衡點。
-          </li>
-        `);
-      }
-      if (Pct.O >= 55) {
-        insights.push(`
-          <li>
-            <strong class="text-emerald-300">3. 【單向閥焦慮 (O=${Pct.O.toFixed(1)}%)】與 Robert Platt 決策時鐘對照：</strong><br/>
-            藉由新增的交叉題組，可精確鑑別您的 O 軸高分究竟是「內在真心渴望學術講台與個人實驗室」，還是純粹的「害怕失去最高門票的損失厭惡 (Loss Aversion)」。Platt 教授強調：軌道慣性隨時間指數上升，每 3–5 年就該主動斬斷猶豫。
-          </li>
-        `);
-      }
-      document.getElementById('insights-list').innerHTML = insights.join('');
-
-      const dbEl = document.getElementById('dealbreakers-summary');
-      if (redlines.length === 0 && important.length === 0) {
-        dbEl.textContent = '目前尚未標記 3x 紅線或 2x 重要題目（全數以 1x 等權重計算）。';
-      } else {
-        const rText = redlines.length > 0
-          ? `3x 絕對紅線共 ${redlines.length} 題（${redlines.map(q => `Q${q[0]}:${state[q[0]].s}分`).join(', ')}）`
-          : '無 3x 紅線';
-        const iText = important.length > 0
-          ? `2x 重要偏好共 ${important.length} 題`
-          : '';
-        dbEl.textContent = `${rText}${iText ? '；' + iText : ''}。系統已自動將紅線題加權 3.5 倍納入正交投影。`;
-      }
-
-      const axisReport = axisKeys.map(k =>
-        `- 軸線 ${k}【${AXES[k].name}】：${Pct[k].toFixed(1)}% (0%端=${AXES[k].left} | 100%端=${AXES[k].right})`
-      ).join('\n');
-
-      const pathReport = rankedPathways.map((p, i) =>
-        `${i + 1}. ${p.name} [${p.tag}]：契合度 ${p.fit.toFixed(1)}%`
-      ).join('\n');
-
-      const rawVector = QUESTIONS.map(q =>
-        `Q${q[0]}(${q[1]}/${q[3]}):${state[q[0]].s}分${state[q[0]].w > 1 ? '[' + state[q[0]].w + 'x]' : ''}`
-      ).join(', ');
-
-      document.getElementById('prompt-textarea').value = `# 角色與任務設定
-你是一位極度客觀、犀利且深諳全球「臨床藥學、藥物流行病學與真實世界證據 (RWE/HEOR)」學術界與產業界生態的頂尖職涯心理與策略顧問。
-我明年即將博士畢業（專精因果推論方法學、高階統計建模與大型醫療資料庫分析，手握多篇頂刊第一作者論文）。我剛剛完成了升級版 v5.1「60 題去標籤隱式心理計量盲測（含 Robert Platt 教授職涯全景對照與 12 維正交投影校準）」。請根據以下我的完整遙測數據，為我進行直指核心的深度診斷與決策剖析。
-
----
-
-## 一、 十二維深層心理動力得分 (50.0% 為嚴格中立基準)
-${axisReport}
-
-## 二、 六大細分職涯賽道契合度排行
-${pathReport}
-
-## 三、 作答離散度與紅線設定
-- 作答標準差 SD = ${stdDev.toFixed(2)}
-- 3x 絕對紅線題目：${redlines.length > 0 ? redlines.map(q => `Q${q[0]}(得分${state[q[0]].s}/5)`).join(', ') : '未特別標記'}
-- 60 題原始作答向量：${rawVector}
-
----
-
-## 四、 請為我執行的深度分析任務（結合 Robert Platt 教授《所以你想走學術界？》的視角剖析）
-
-1. **「軟性經費生存焦慮 (Soft-Money Precarity)」與「被掐脖子的審查窒息感 (G=${Pct.G.toFixed(1)}%)」**：
-   Platt 教授指出，學術界最殘酷的現實之一是必須靠外部計畫發自己的薪水（Soft Money），且機構不接受「沒拿到錢不是我的錯」。對照我的作答（特別是 Q53、Q16、Q1），我是否有承擔這種「獨立自負盈虧創業家」的心理能量？還是我更適合組織提供穩定硬體預算、免除斷糧焦慮的平臺？
-
-2. **「匠人實作留戀 (E=${Pct.E.toFixed(1)}%)」vs「科學家異化為募資經理 (Managerial Alienation)」**：
-   Platt 教授坦言，資深學者往往花最多時間煩惱「錢從哪裡來發薪水給學生」、異化為實驗室營運經理，反而沒有時間推導證明與撰寫代碼。對照我對動手推導與高階建模的熱愛（Q54, Q23, Q2），如果走學術路線，我是否必然會在 5–8 年後遭遇這種嚴重的智識空虛？產業界的 Global RWE 或專職方法學家路徑，能否讓我更長久地維持科學家純粹性？
-
-3. **「慢性持續拒絕耐受力 (Chronic Resilience to Rejection)」與生活邊界 (B=${Pct.B.toFixed(1)}%)**：
-   Platt 教授強調，即使是極度成功的學者，計畫與論文也常年面臨 60–70% 的退件率。對照我的 G 軸、B 軸與 Q55 作答，這種必須長達十五年與高頻被拒絕共處的生態，對我的身心與生活邊界會造成何種不可逆的磨損？
-
-4. **破除學術道德崇高神話，檢驗「立竿見影的公衛實證 ROI (M=${Pct.M.toFixed(1)}%, R=${Pct.R.toFixed(1)}%)」**：
-   Platt 教授強調：學術界絕非唯一具道德正當性的出路，產業界與政府對公衛健康的貢獻往往 ROI 更為立即。對照我的 Q56、Q38、Q46，我內心真正的價值感來源，究竟是象牙塔裡的引用次數，還是具體改變治療指引、新藥給付與法規決策的實務影響力？
-
-5. **「單向閥後路 (O=${Pct.O.toFixed(1)}%)」與「職涯軌道慣性 (Inertia)」的破局決策**：
-   Platt 教授提醒：在某條軌道走得越遠，慣性越大，轉型越困難。結合我手握 JAMA Internal Medicine 等頂刊第一作者的實際籌碼，我該如何在博士畢業這個黃金分水嶺，徹底擺脫「損失厭惡 (Loss Aversion)」，在 Fellowship 跳板與直接空降跨國藥廠之間做出決策？
-
-6. **求職實戰提問與防禦策略**：
-   請給我一套面試時能優雅「反測」目標團隊是否存在「軟性經費斷糧壓力」、「過度層級官僚」以及「外行干預推論結論」的隱式提問清單，並指導我如何以頂級實證代表作爭取最具主權與發表自由的職位。`;
     }
+  });
+}
 
-    function copyGeneratedPrompt() {
-      const ta = document.getElementById('prompt-textarea');
-      ta.select();
-      document.execCommand('copy');
-      const btn = document.getElementById('btn-copy-prompt');
-      btn.textContent = '✅ 已成功複製到剪貼簿！';
-      showToast('📋 完整 60 題數據與 Robert Platt 深度對照 Prompt 已複製！');
-      setTimeout(() => {
-        btn.textContent = '📋 一鍵複製完整 Prompt';
-      }, 2500);
-    }
+function renderBrutalFeedback(v, byRaw, byReal, geo, acadProb, hustle) {
+  const med = byReal.find(t => t.id === 'ncku_med_faculty');
+  const box = document.getElementById('brutal-feedback');
+  box.innerHTML = `
+    <p><strong>1. 看清楚雷達圖上的紅藍對撞（為什麼你的身體在抗拒教職）：</strong><br>
+    你的 <strong>G軸 (${v.G}% 痛恨單向審批)</strong>、<strong>B軸 (${v.B}% 下班徹底關機)</strong> 與 <strong>S軸 (${v.S}% 拒當新手保母)</strong> 全部頂在極端高點，而「成大醫學系專任教職」要求的卻是低 G（順從國科會與教評會）、低 B（寒暑假週末寫計畫改論文）與低 S（每學年湊滿 18 鐘點授課＋指導研究生）。你的純心理契合度只有 <strong>${med.rawFit}%</strong>，乘上開缺與排位風險後更只剩 <strong>${med.realUtility}%</strong>。如果你去接教職，純粹是為了迎合太太與老師的安全感，你會在入職第 3 年內陷入嚴重的憤怒與內耗。</p>
 
-    window.onload = function () {
-      renderQuestionsList();
-    };
-  </script>
+    <p><strong>2. 戳破「一旦跟老師說不要教職，就沒人脈進業界」的恐懼迷思：</strong><br>
+    實驗室裡已經有一位發表比你差、但正在蹲博後的學長在苦等那個缺。如果你主動把這個「還沒確定會不會開出來、且要扛全系生統課」的缺讓給博後學長，你反而幫指導教授解決了最頭痛的排位難題！老師出於對你的愧疚與感謝，加上希望在業界安插自己人的利益考量，絕對會更賣力幫你引薦藥廠人脈。<strong>把「搶教職」改成「請老師幫我推向跨國業界高階位置」，才是讓老師 100% 幫你的真正槓桿。</strong></p>
+
+    <p><strong>3. 留在台灣的唯一破局點（${byReal[0].name}）：</strong><br>
+    既然不去美國 (地理鎖死 ${geo}%)，台灣本地藥廠又太偏向行政 PM，你最該主動出擊的是<strong>「跨國頂尖 ARO（IQVIA / Evidera / Analysis Group 等）的亞太方法學團隊」</strong>或<strong>「外商藥廠掛在 Global/APAC 底下但允許駐台遠端的職位」</strong>。別再等二月學校開獎了，現在就私訊 Amgen 學長與業界前輩，把你認識的 3–4 個人滾雪球擴大到 15 人！</p>
+  `;
+}
+
+function copyDiagnosticPrompt() {
+  const t = window.latestTelemetry;
+  const vecStr = Object.keys(AXES).map(k => `${k}(${AXES[k].name}): ${t.userVec[k]}%`).join(', ');
+  const rankStr = t.byReal.map((r, i) => `${i+1}. ${r.name} [純心理契合: ${r.rawFit}% | 現實校正效用: ${r.realUtility}%]`).join('\n');
+
+  const promptText = `請以「不討好、不順從我情緒、具備獨立批判思考」的頂尖職涯策略顧問身分，根據我最新的 v6.0 台灣現實強制取捨盲測數據進行剖析：
+【外部現實重力參數】家庭地理鎖死台灣度=${t.geo}%, 醫學系二月順利設缺且贏過博後學長機率=${t.acadProb}%, 獨立陌生開發業界意願=${t.hustle}%
+【十二維心理向量】${vecStr}
+【台灣六大真實賽道排行】\n${rankStr}
+請直接指出我目前思維中的自欺欺人與機會成本盲點，並給出接下來 30 天對指導教授、對太太、對業界隱藏市場的具體行動指令。`;
+
+  navigator.clipboard.writeText(promptText).then(() => {
+    showToast('已複製 v6.0 遙測數據與獨立批判 Prompt！');
+  });
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.innerText = msg;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 2600);
+}
+
+window.onload = init;
+</script>
 </body>
 </html>
