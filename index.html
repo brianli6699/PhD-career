@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>博士職涯方向中立評估羅盤 v7.0</title>
+  <title>內在價值與職涯路徑中立羅盤 v8.0</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -11,7 +11,7 @@
     body {
       font-family: 'Inter', 'Noto Sans TC', sans-serif;
       background-color: #0f172a;
-      color: #f8fafc;
+      color: #f1f5f9;
     }
     .option-btn { transition: all 0.15s ease; }
     .option-btn:hover { transform: translateY(-1px); }
@@ -25,14 +25,14 @@
 
   <!-- Header -->
   <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
       <div>
-        <div class="flex items-center gap-2 text-xs font-semibold tracking-wider text-sky-400">
-          <span class="px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/30">Neutral Psychometrics v7.0</span>
-          <span>36 題雙向平衡題組 × 12 維中性光譜 × 學界／業界對稱評估</span>
+        <div class="flex items-center gap-2 text-xs font-semibold tracking-wider text-slate-400">
+          <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">Neutral Compass v8.0</span>
+          <span>24 題純粹價值探索 × 8 維中性光譜 × 數學零偏誤</span>
         </div>
         <h1 class="text-xl md:text-2xl font-bold text-white mt-1">
-          博士職涯方向中立評估羅盤
+          內在價值與職涯路徑中立羅盤
         </h1>
       </div>
       <div class="flex items-center gap-2">
@@ -43,67 +43,20 @@
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 mt-6 space-y-8">
+  <main class="max-w-5xl mx-auto px-4 mt-6 space-y-8">
 
     <!-- 說明卡片 -->
     <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-sm leading-relaxed">
-      <div class="font-semibold text-white mb-1">💡 測驗說明（嚴格中立設計）：</div>
-      本問卷不包含預設立場，完整納入<strong>學界（如題目自主、寒暑假彈性、教學成就、長期穩定、精緻小團隊）</strong>與<strong>業界（如即時商業影響、免申請經費、明確上下班界線、前期高薪）</strong>各自的優勢與代價。請依第一直覺作答，並可點擊每題右側標籤標記該題對你的重要程度（1x 一般 / 2x 重要 / 3x 核心底線）。
+      <div class="font-semibold text-white mb-1">🧭 測驗前提（抽離外在焦慮，回到內在偏好）：</div>
+      請先暫時放下薪資高低與外界期待，單純以<strong>「假設基本生活無虞，我每天想過什麼樣的日常、想在什麼樣的規則下工作」</strong>來直覺作答。所有路徑在未作答或全選中立時皆嚴格為 <strong>50.0%</strong>，不預設任何一方優劣。點擊每題右側標籤可調整權重（1x 一般 / 2x 重要 / 3x 核心底線）。
     </div>
-
-    <!-- 外部客觀條件滑桿 -->
-    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-      <h2 class="text-base font-bold text-white mb-1">⚙️ 第一步：設定目前的客觀環境條件（選填，可隨時調整）</h2>
-      <p class="text-xs text-slate-400 mb-4">用於區分「純粹的個人性格契合度」與「考量家庭地點、職缺把握度後的實務可行性」。</p>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-          <div class="flex justify-between text-xs font-semibold mb-2">
-            <span class="text-slate-300">📍 留在台灣／原居住地的優先度</span>
-            <span id="val-geo" class="text-sky-400 font-mono">70%</span>
-          </div>
-          <input id="slider-geo" type="range" min="0" max="100" value="70" oninput="updateContext()" class="w-full accent-sky-500 cursor-pointer" />
-          <div class="flex justify-between text-[11px] text-slate-500 mt-1">
-            <span>0% 可赴海外</span>
-            <span>50% 台灣跨縣市皆可</span>
-            <span>100% 鎖定原居住地</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-          <div class="flex justify-between text-xs font-semibold mb-2">
-            <span class="text-slate-300">🎓 近期取得理想教職缺額的把握度</span>
-            <span id="val-acad-prob" class="text-emerald-400 font-mono">50%</span>
-          </div>
-          <input id="slider-acad-prob" type="range" min="10" max="100" value="50" oninput="updateContext()" class="w-full accent-emerald-500 cursor-pointer" />
-          <div class="flex justify-between text-[11px] text-slate-500 mt-1">
-            <span>10% 高度不確定</span>
-            <span>50% 機會一半</span>
-            <span>100% 已有明確缺額</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-          <div class="flex justify-between text-xs font-semibold mb-2">
-            <span class="text-slate-300">🤝 主動拓展業界人脈與求職的意願</span>
-            <span id="val-hustle" class="text-indigo-400 font-mono">50%</span>
-          </div>
-          <input id="slider-hustle" type="range" min="10" max="100" value="50" oninput="updateContext()" class="w-full accent-indigo-500 cursor-pointer" />
-          <div class="flex justify-between text-[11px] text-slate-500 mt-1">
-            <span>10% 較被動</span>
-            <span>50% 願意嘗試</span>
-            <span>100% 非常積極</span>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- 題目區 -->
     <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
         <div class="flex flex-wrap gap-2" id="group-tabs"></div>
         <div class="text-xs text-slate-400 font-mono">
-          作答進度：<span id="progress-text" class="text-white font-bold">0 / 36</span> 題
+          作答進度：<span id="progress-text" class="text-white font-bold">0 / 24</span> 題
         </div>
       </div>
 
@@ -113,8 +66,8 @@
         <button id="btn-prev" onclick="changeGroup(-1)" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 disabled:opacity-40">
           ← 上一組
         </button>
-        <span id="group-indicator" class="text-xs text-slate-400">第 1 / 6 組</span>
-        <button id="btn-next" onclick="changeGroup(1)" class="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-xs font-semibold text-white">
+        <span id="group-indicator" class="text-xs text-slate-400">第 1 / 4 組</span>
+        <button id="btn-next" onclick="changeGroup(1)" class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-semibold text-white">
           下一組 →
         </button>
       </div>
@@ -122,61 +75,35 @@
 
     <!-- 結果分析區 -->
     <section class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-          <div class="text-xs text-slate-400">🧭 純性格與工作偏好最高契合</div>
-          <div id="top-raw-title" class="text-base font-bold text-sky-400 mt-1">--</div>
-          <div class="mt-2 text-xs text-slate-400 flex justify-between">
-            <span>純心理契合度</span>
-            <span id="top-raw-score" class="font-mono font-bold text-white">--%</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-900 border border-emerald-500/40 rounded-2xl p-5">
-          <div class="text-xs text-emerald-400 font-semibold">⚖️ 考量客觀環境後「綜合可行性最高」</div>
-          <div id="top-real-title" class="text-base font-bold text-white mt-1">--</div>
-          <div class="mt-2 text-xs text-slate-400 flex justify-between">
-            <span>綜合可行分數</span>
-            <span id="top-real-score" class="font-mono font-bold text-emerald-400">--%</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-          <div class="text-xs text-slate-400 font-semibold">🔍 你的核心偏好張力</div>
-          <div id="tension-title" class="text-sm font-bold text-indigo-300 mt-1">--</div>
-          <p id="tension-desc" class="text-xs text-slate-400 mt-1.5 leading-relaxed">--</p>
-        </div>
-      </div>
-
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- 六大賽道對照 -->
+        <!-- 四大路徑對照 -->
         <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5">
-          <h3 class="text-base font-bold text-white mb-1">📊 六大職涯路徑中立對照</h3>
+          <h3 class="text-base font-bold text-white mb-1">⚖️ 四大職涯路徑契合度對照</h3>
           <p class="text-xs text-slate-400 mb-4">
-            同時列出「純性格契合度」與「考量外部環境後的綜合分數」，以及每條路徑客觀的優勢與取捨。
+            分數僅代表「與你內在偏好的方向一致性」，50% 為中立基準。請同時檢視每條路徑你必須接受的日常交換條件。
           </p>
           <div id="tracks-list" class="space-y-4"></div>
         </div>
 
-        <!-- 12 維度光譜 -->
+        <!-- 8 維度光譜 -->
         <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
           <div>
-            <h3 class="text-base font-bold text-white mb-1">🧬 十二維中性工作偏好光譜</h3>
-            <p class="text-xs text-slate-400 mb-3">50% 為嚴格中立基準；偏向左側或右側僅代表風格差異，無優劣之分。</p>
+            <h3 class="text-base font-bold text-white mb-1">🧬 八維中性價值光譜</h3>
+            <p class="text-xs text-slate-400 mb-3">0% 與 100% 僅代表光譜兩端，沒有好壞對錯之分。</p>
             <div class="bg-slate-950 rounded-xl p-2 border border-slate-800">
-              <canvas id="radarChart" height="290"></canvas>
+              <canvas id="radarChart" height="260"></canvas>
             </div>
           </div>
-          <div id="axes-bars" class="space-y-2.5 mt-4 max-h-64 overflow-y-auto pr-1"></div>
+          <div id="axes-bars" class="space-y-3 mt-4"></div>
         </div>
       </div>
 
       <!-- 中立摘要與匯出 -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
-          <h3 class="text-base font-bold text-white">📝 客觀結果摘要與取捨對照</h3>
-          <button onclick="copyNeutralPrompt()" class="px-3.5 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs transition">
-            📋 複製 v7.0 中立評估數據（供 AI 深度討論）
+          <h3 class="text-base font-bold text-white">📝 內在張力與中立觀察</h3>
+          <button onclick="copyNeutralPrompt()" class="px-3.5 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-semibold text-xs transition border border-slate-600">
+            📋 複製 v8.0 中立數據
           </button>
         </div>
         <div id="neutral-summary" class="space-y-3 text-sm text-slate-300 leading-relaxed"></div>
@@ -185,172 +112,115 @@
 
   </main>
 
-  <div id="toast" class="fixed bottom-5 right-5 hidden bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold z-50">
+  <div id="toast" class="fixed bottom-5 right-5 hidden bg-slate-700 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold border border-slate-600 z-50">
     已複製到剪貼簿！
   </div>
 
 <script>
-// 12 維度完全中立定義（0% 與 100% 皆為中性特質，無好壞之分）
+// 8 維度完全中立光譜（0% = 左側傾向，100% = 右側傾向）
 const AXES = {
-  A: { code: 'A', name: '研究題目主權', left: '樂於解決組織指定之實務痛點', right: '重視完全自主決定研究方向' },
-  B: { code: 'B', name: '時間與生活節奏', left: '偏好彈性自主與寒暑假節奏', right: '偏好上下班界線分明之契約制' },
-  E: { code: 'E', name: '方法學定位', left: '偏重實務落地與跨部門整合', right: '偏重前沿方法學創新與深度鑽研' },
-  G: { code: 'G', name: '考核與資金機制', left: '適應同儕審查與自主申請經費', right: '偏好組織配給經費與明確績效' },
-  H: { code: 'H', name: '職涯切入節奏', left: '接受按部就班的過渡與累積期', right: '希望畢業即進入正式核心職位' },
-  M: { code: 'M', name: '報償與價值重心', left: '重視學術名譽、穩定與長期保障', right: '重視前期高現金與市場定價' },
-  O: { code: 'O', name: '職涯身分保留', left: '重視及早累積商業實務資歷', right: '重視保留學術身分與教職資格' },
-  P: { code: 'P', name: '成果歸屬型態', left: '接受成果用於組織內部決策', right: '重視公開署名發表與學術留名' },
-  R: { code: 'R', name: '科學獨立性偏好', left: '樂見研究服務於商業與產品策略', right: '堅持研究完全獨立於商業利益' },
-  S: { code: 'S', name: '教學與協作型態', left: '享受教學分享與帶領小團隊成長', right: '偏好與成熟專家平行協作' },
-  T: { code: 'T', name: '回報時間軸', left: '願長期耕耘換取後期安穩與地位', right: '偏好短期內看見具體成果與回饋' },
-  X: { code: 'X', name: '穩定與流動偏好', left: '重視長期深耕與低裁員風險', right: '重視跨公司跳槽與市場流動性' }
+  Q1: { code: '探索', name: '知識動機', left: '由個人好奇出發、追求原創真理', right: '由具體問題出發、追求實務落地' },
+  Q2: { code: '規則', name: '遊戲規則偏好', left: '願適應學術同儕審查與聲望累積', right: '偏好規則透明、以明確交付論成敗' },
+  Q3: { code: '人際', name: '日常互動模式', left: '享受教學分享與帶小團隊深度成長', right: '偏好界線分明、就事論事的平行協作' },
+  Q4: { code: '節奏', name: '時間與生活邊界', left: '重視高度彈性與寒暑假深度思考', right: '重視上下班分明、下班徹底抽離' },
+  Q5: { code: '工藝', name: '專業重心', left: '長期親自鑽研前沿方法學與建模', right: '整合跨領域資源與推動策略決策' },
+  Q6: { code: '代價', name: '前期磨合耐受', left: '願忍受前期升等與寫計畫換長期自由', right: '願接受方向由組織決定以換免募資' },
+  Q7: { code: '原則', name: '科學獨立性', left: '堅持研究完全獨立於任何商業立場', right: '只要方法嚴謹，樂見研究服務商業' },
+  Q8: { code: '定位', name: '自我身分認同', left: '看重獨立學者身分與公開署名留名', right: '看重專業解決方案帶來的實質改變' }
 };
 
-// 36 題嚴格中立、單一概念、雙向平衡題組（每組 6 題，共 6 組）
+// 24 題嚴格平衡題組（每組 6 題，共 4 組；每維度剛好 3 題，正反向對稱）
 const QUESTIONS = [
-  // 組 1：研究自主權 vs. 組織目標導向
-  { id: 1, group: 0, pAxis: 'A', sAxis: 'R', pDir: 1, sDir: 1,
-    text: '能夠完全由自己決定研究題目與切入角度，而不必配合公司產品線調整方向，對我來說非常重要。' },
-  { id: 2, group: 0, pAxis: 'A', sAxis: 'T', pDir: -1, sDir: 1,
-    text: '相較於自己從零發想題目，我更喜歡組織已經定義好具體的臨床或商業問題，由我專注於提出最佳解法。' },
-  { id: 3, group: 0, pAxis: 'R', sAxis: 'P', pDir: 1, sDir: 1,
-    text: '我希望自己的研究結論完全獨立於商業利益之外，即使結果對特定產品不利也能毫無顧忌地公開發表。' },
-  { id: 4, group: 0, pAxis: 'R', sAxis: 'T', pDir: -1, sDir: 1,
-    text: '只要分析方法嚴謹不造假，我樂於讓自己的研究直接服務於新藥上市、健保給付談判或商業策略。' },
-  { id: 5, group: 0, pAxis: 'P', sAxis: 'O', pDir: 1, sDir: 1,
-    text: '在國際期刊上留下自己的姓名與代表作，並建立個人長期的學術品牌，是我非常看重的成就感來源。' },
-  { id: 6, group: 0, pAxis: 'P', sAxis: 'M', pDir: -1, sDir: 1,
-    text: '即使研究成果只作為公司內部決策或法規送件使用、不對外公開發表，只要能產生實質影響力，我也能接受。' },
+  // 組 1：研究初心與科學原則
+  { id: 1, group: 0, axis: 'Q1', dir: -1,
+    text: '假設基本生活無虞，我最在意的是每天都能研究自己真心好奇的題目，而不是去解別人指派的任務。' },
+  { id: 2, group: 0, axis: 'Q1', dir: 1,
+    text: '比起自己從零發想學術題目，看到自己的分析直接影響實際決策或解決現實難題，更能帶給我滿足感。' },
+  { id: 3, group: 0, axis: 'Q7', dir: -1,
+    text: '我希望自己的專業立場完全獨立於任何商業利益之外，哪怕結論不好聽，也能毫無顧忌地公開說出真話。' },
+  { id: 4, group: 0, axis: 'Q7', dir: 1,
+    text: '只要研究過程嚴謹、絕不扭曲數據，我並不排斥在商業框架下工作，用嚴謹的科學為產品或組織把關。' },
+  { id: 5, group: 0, axis: 'Q8', dir: -1,
+    text: '在學術界建立屬於自己的研究品牌、發表能留名後世的代表作，對我來說具有無可取代的意義。' },
+  { id: 6, group: 0, axis: 'Q8', dir: 1,
+    text: '我不在乎成果最後有沒有掛我的名字公開發表，只要這份專業產出在組織內發揮了關鍵作用，我就很滿足。' },
 
-  // 組 2：教學分享與團隊型態
-  { id: 7, group: 1, pAxis: 'S', sAxis: 'O', pDir: -1, sDir: 1,
-    text: '把複雜的統計與研究邏輯講解清楚、讓學生或後輩真正聽懂，能帶給我很大的成就感。' },
-  { id: 8, group: 1, pAxis: 'S', sAxis: 'E', pDir: 1, sDir: 1,
-    text: '在日常工作中，我更傾向與已經具備專業基礎的成熟同事平行合作，而非花時間從零訓練初學者。' },
-  { id: 9, group: 1, pAxis: 'S', sAxis: 'A', pDir: -1, sDir: 1,
-    text: '如果團隊規模精簡（例如只帶 1～2 位優秀助理或學生），我很願意親力親為地指導並一起完成研究。' },
-  { id: 10, group: 1, pAxis: 'S', sAxis: 'B', pDir: 1, sDir: 1,
-    text: '我希望工作內容盡量聚焦在專業研究本身，盡可能減少排課、出考卷或處理學生事務的比例。' },
-  { id: 11, group: 1, pAxis: 'E', sAxis: 'A', pDir: 1, sDir: 1,
-    text: '我非常享受鑽研前沿的方法學創新（例如進階因果推論模型），這是我工作樂趣的核心。' },
-  { id: 12, group: 1, pAxis: 'E', sAxis: 'M', pDir: -1, sDir: 1,
-    text: '如果工作重心轉向跨部門策略溝通、專案管理與數據解讀（減少自己寫程式的比例），只要整體發展好，我也能適應。' },
+  // 組 2：遊戲規則與處世心境
+  { id: 7, group: 1, axis: 'Q2', dir: 1,
+    text: '相較於「表面客氣但私下講究人情、派系與主觀審查」的環境，我更適應「利益與規則擺在檯面上、合則來不合則去」的環境。' },
+  { id: 8, group: 1, axis: 'Q2', dir: -1,
+    text: '即使學術審查與計畫評鑑有時帶有主觀色彩，我仍願意將其視為維護學術品質的必要門檻，並耐心磨合。' },
+  { id: 9, group: 1, axis: 'Q6', dir: -1,
+    text: '為了換取往後數十年「完全自己決定要做什麼」的自由，我願意先咬牙走完前期數年的升等、評鑑與找經費之路。' },
+  { id: 10, group: 1, axis: 'Q6', dir: 1,
+    text: '如果要花大量心力去寫計畫書向委員爭取經費、應付體制評鑑，就算最後能換來自由，過程也會讓我感到極度消耗。' },
+  { id: 11, group: 1, axis: 'Q2', dir: 1,
+    text: '我只想當一個單純用邏輯與數據說話的人，希望組織直接把資源與目標準備好，讓我專心把專業做到極致。' },
+  { id: 12, group: 1, axis: 'Q6', dir: -1,
+    text: '如果公司因為策略改變，突然叫停我投入半年心血的研究專案，這種「身不由己」會比寫計畫被退件更讓我難受。' },
 
-  // 組 3：時間彈性、寒暑假 vs. 下班界線
-  { id: 13, group: 2, pAxis: 'B', sAxis: 'A', pDir: -1, sDir: 1,
-    text: '我非常珍惜「不需打卡、可自主安排工作時段，且擁有寒暑假進行深度思考與國際交流」的高度時間彈性。' },
-  { id: 14, group: 2, pAxis: 'B', sAxis: 'T', pDir: 1, sDir: 1,
-    text: '我更偏好「上下班時間明確、週末與休假可完全切換成生活模式」的契約制工作節奏。' },
-  { id: 15, group: 2, pAxis: 'B', sAxis: 'X', pDir: -1, sDir: -1,
-    text: '為了換取平日高度的作息自主權，我能接受工作與生活界線較模糊（例如偶爾在週末或夜間處理研究與文稿）。' },
-  { id: 16, group: 2, pAxis: 'B', sAxis: 'M', pDir: 1, sDir: 1,
-    text: '如果工作需要經常配合跨時區（如歐美）在晚間開會，或需按小時精確回報工時，我會感到明顯壓力。' },
-  { id: 17, group: 2, pAxis: 'T', sAxis: 'X', pDir: -1, sDir: -1,
-    text: '我願意在職涯前幾年投入較多心力通過考核或升等，以換取中年後極高的工作穩定度與自主權。' },
-  { id: 18, group: 2, pAxis: 'T', sAxis: 'M', pDir: 1, sDir: 1,
-    text: '我希望在畢業後的 1～3 年內，就能看到明確的薪資成長與專案落地成果，不喜歡等待期過長。' },
+  // 組 3：人際界線與教學互動
+  { id: 13, group: 2, axis: 'Q3', dir: -1,
+    text: '如果不需要養龐大團隊，只需帶領 1～2 位認真的夥伴並親自上課分享知識，其實是我內心蠻享受的畫面。' },
+  { id: 14, group: 2, axis: 'Q3', dir: 1,
+    text: '我比較內向，日常工作希望能盡量減少「管人、教人、應付學生事務」的消耗，與成熟專家就事論事的合作最讓我自在。' },
+  { id: 15, group: 2, axis: 'Q5', dir: -1,
+    text: '無論身處哪個環境，我都希望保留高比例的時間自己動手設計模型、寫程式或深度閱讀，不想太早變成純管理職。' },
+  { id: 16, group: 2, axis: 'Q5', dir: 1,
+    text: '如果隨著資歷成長，工作重心逐漸轉向跨部門溝通、專案協調與策略解讀，減少自己寫程式的比例，我可以欣然接受。' },
+  { id: 17, group: 2, axis: 'Q3', dir: -1,
+    text: '把深奧的方法學講解到讓後輩豁然開朗，這種「傳承與啟發」的成就感，是純粹解題無法替代的。' },
+  { id: 18, group: 2, axis: 'Q5', dir: -1,
+    text: '我對方法學的純粹度有很高的要求，如果環境只求「夠用就好、趕快交差」，會讓我很快失去工作熱情。' },
 
-  // 組 4：經費申請、考核機制與商業變動
-  { id: 19, group: 3, pAxis: 'G', sAxis: 'A', pDir: -1, sDir: 1,
-    text: '透過撰寫研究計畫向政府或外部機構爭取經費，雖然有壓力，但為了換取獨立主持研究的自由，我可以接受。' },
-  { id: 20, group: 3, pAxis: 'G', sAxis: 'T', pDir: 1, sDir: 1,
-    text: '我更希望由公司或機構直接提供穩定的研究經費與資料庫，讓我把精力集中在執行研究，而非撰寫計畫書。' },
-  { id: 21, group: 3, pAxis: 'G', sAxis: 'P', pDir: -1, sDir: 1,
-    text: '我能平常心看待學術期刊的同儕審查與反覆修改意見，將其視為提升研究品質的必要過程。' },
-  { id: 22, group: 3, pAxis: 'G', sAxis: 'H', pDir: 1, sDir: 1,
-    text: '相較於仰賴少數匿名委員或評鑑委員會的主觀審查，我更習慣以明確的專案交付與商業指標來衡量績效。' },
-  { id: 23, group: 3, pAxis: 'X', sAxis: 'M', pDir: -1, sDir: -1,
-    text: '考慮到 40～50 歲的家庭責任，一份「幾乎沒有組織重組或中年裁員風險」的長期穩定職位，對我極具吸引力。' },
-  { id: 24, group: 3, pAxis: 'X', sAxis: 'M', pDir: 1, sDir: 1,
-    text: '即使商業環境存在組織變動風險，只要前期能累積高薪資與跨公司通用技能，我對市場波動並不畏懼。' },
-
-  // 組 5：薪資回報、社會角色與過渡期
-  { id: 25, group: 4, pAxis: 'M', sAxis: 'O', pDir: -1, sDir: 1,
-    text: '大學教授或研究員所帶來的社會尊重、學術自由與長期生活品質，在我心中可以彌補起薪與業界的落差。' },
-  { id: 26, group: 4, pAxis: 'M', sAxis: 'T', pDir: 1, sDir: 1,
-    text: '在評估工作時，能提供具競爭力的現金年薪與資產累積速度，是我最優先考量的實務指標之一。' },
-  { id: 27, group: 4, pAxis: 'H', sAxis: 'O', pDir: -1, sDir: 1,
-    text: '如果為了爭取理想的長期教職或研究職，需要在畢業後先擔任 1～2 年的博士後研究員作為過渡，我可以接受。' },
-  { id: 28, group: 4, pAxis: 'H', sAxis: 'T', pDir: 1, sDir: 1,
-    text: '我強烈希望博士畢業後能直接銜接正式職位，盡量避免進入薪資較低或定位模糊的過渡期。' },
-  { id: 29, group: 4, pAxis: 'O', sAxis: 'P', pDir: 1, sDir: 1,
-    text: '如果現在離開學術體系，未來可能較難再回到大學擔任專任教師，這件事會讓我感到惋惜或猶豫。' },
-  { id: 30, group: 4, pAxis: 'O', sAxis: 'X', pDir: -1, sDir: 1,
-    text: '對我而言，博士學位是專業能力的證明，不一定要透過成為大學教授來實現自我價值。' },
-
-  // 組 6：綜合情境權衡
-  { id: 31, group: 5, pAxis: 'A', sAxis: 'G', pDir: 1, sDir: -1,
-    text: '「自己決定想研究的疾病與方法，但需定期寫計畫找經費」比「經費充足，但題目由公司商業策略決定」更吸引我。' },
-  { id: 32, group: 5, pAxis: 'B', sAxis: 'S', pDir: 1, sDir: 1,
-    text: '「週五下班即可完全休息，但平日需配合公司會議與商業節奏」比「平日時間彈性且有寒暑假，但需承擔升等與帶學生責任」更適合我。' },
-  { id: 33, group: 5, pAxis: 'X', sAxis: 'T', pDir: -1, sDir: -1,
-    text: '「留在熟悉的城市與穩定體系，收入穩定成長」比「進入高薪但可能需要跨縣市通勤或面對組織變動的商業市場」更讓我安心。' },
-  { id: 34, group: 5, pAxis: 'E', sAxis: 'R', pDir: 1, sDir: 1,
-    text: '我希望未來的日常工作中，依然能保有高比例的時間親自設計模型、撰寫論文或與頂尖學者進行純粹的科學討論。' },
-  { id: 35, group: 5, pAxis: 'M', sAxis: 'H', pDir: 1, sDir: 1,
-    text: '如果現在有一份薪資優渥、目標明確且能立即發揮統計專長的業界正職，我會傾向立刻把握，而非繼續等待不確定的體制內缺額。' },
-  { id: 36, group: 5, pAxis: 'O', sAxis: 'S', pDir: 1, sDir: -1,
-    text: '整體而言，能夠在大學裡經營一個精緻小巧的研究團隊、親自上課並持續發表頂尖論文，依然是我內心非常嚮往的畫面。' }
+  // 組 4：時間節奏與內在權衡
+  { id: 19, group: 3, axis: 'Q4', dir: -1,
+    text: '我非常珍惜不需打卡、平日作息彈性，且一年有數個月寒暑假可以安靜思考與深度寫作的生活節奏。' },
+  { id: 20, group: 3, axis: 'Q4', dir: 1,
+    text: '比起「平日彈性但晚上週末總覺得還有論文沒寫完」，我更喜歡「上班專心衝刺、下班與週末徹底關機」的清晰邊界。' },
+  { id: 21, group: 3, axis: 'Q4', dir: 1,
+    text: '如果工作沒有明確的休假與下班界線，長期處在「隨時都在想研究或改稿」的狀態，會讓我感到生活品質下降。' },
+  { id: 22, group: 3, axis: 'Q1', dir: -1,
+    text: '即使知道學術界的生存遊戲很煩人，我內心深處還是對「探索未知、純粹做學問」有一份割捨不掉的嚮往。' },
+  { id: 23, group: 3, axis: 'Q7', dir: 1,
+    text: '只要能避開繁瑣的體制內耗與無止盡的經費申請，在一個目標明確、分工細膩的專業團隊裡當個純粹的技術專家，對我極具吸引力。' },
+  { id: 24, group: 3, axis: 'Q8', dir: -1,
+    text: '想到一旦離開學術體系，這輩子可能就再也很難回到大學擔任教職，我心裡還是會有一股明顯的遺憾與不捨。' }
 ];
 
-// 六大中立職涯賽道（完整納入學界「精緻小團隊 PI」與各路徑真實優缺點）
+// 四大路徑模型（純粹以方向向量定義，數學上對 50% 完全對稱）
 const TRACKS = [
   {
     id: 'boutique_pi',
-    name: '1. 頂大醫學院專任教職（精緻小團隊 PI 模式）',
-    tag: '高度自主、寒暑假彈性、長期穩定｜需申請計畫與承擔教學升等',
-    pros: '研究題目 100% 自主、寒暑假彈性高、可走 1–2 位頂尖助理的精緻路線、升等後幾乎無中年裁員風險、可留在原居住地。',
-    cons: '需定期撰寫國科會或產學計畫維持經費、承擔基本授課與升等評鑑壓力、前期固定起薪較外商低。',
-    vec: { A: 88, B: 22, E: 82, G: 20, H: 40, M: 32, O: 90, P: 92, R: 85, S: 25, T: 28, X: 20 },
-    contextFactor: (geo, acadProb, hustle) => 0.55 + 0.45 * (acadProb / 100)
+    name: '1. 頂大醫學院專任教職（精緻小團隊模式）',
+    badge: '學界・高度自主',
+    pros: '研究題目 100% 自主、寒暑假深度思考彈性、享受教學相長與知識傳承、通過升等後享有極長期的學術自由。',
+    cons: '無法跳過前期爭取缺額、寫計畫找經費與六年升等的體制磨合，且需處理一定比例的系所人際與行政事務。',
+    vec: { Q1: 15, Q2: 20, Q3: 20, Q4: 15, Q5: 25, Q6: 15, Q7: 15, Q8: 15 }
   },
   {
-    id: 'research_inst',
-    name: '2. 國家級研究機構 / 醫學中心專職研究員',
-    tag: '專注研究、免大學部授課｜薪資成長較平緩、仍需計畫經費',
-    pros: '大幅減少大學部教學與學生事務、保有高比例純粹研究與發表空間、工作環境相對穩定。',
-    cons: '薪資天花板不如業界、部分研究方向仍需配合機構或臨床科部主題、升遷管道相對單一。',
-    vec: { A: 65, B: 45, E: 80, G: 38, H: 45, M: 38, O: 75, P: 82, R: 72, S: 55, T: 42, X: 35 },
-    contextFactor: (geo, acadProb, hustle) => 0.72 + 0.28 * (acadProb / 100)
+    id: 'pure_research',
+    name: '2. 純研究機構專職研究員（國衛院 / 中研院 / 數據中心）',
+    badge: '學研・純粹專注',
+    pros: '大幅免除大學部授課與帶大量學生的消耗，能保有高比例的純粹研究、前沿方法學鑽研與獨立發表空間。',
+    cons: '仍需面對計畫經費申請與同儕審查的體制規則，且部分研究方向需配合機構或合作臨床團隊的主題。',
+    vec: { Q1: 25, Q2: 35, Q3: 55, Q4: 35, Q5: 15, Q6: 30, Q7: 25, Q8: 25 }
   },
   {
-    id: 'aro_global_hub',
-    name: '3. 跨國頂尖 ARO / 藥廠駐台 Global 方法學家（如 IQVIA / Evidera）',
-    tag: '高階方法學實戰、免申請經費｜專案節奏緊湊、偶有跨時區會議',
-    pros: '能操作多國大型資料庫與進階因果推論、與成熟專家團隊協作、薪資具競爭力、常有混合或遠端辦公彈性。',
-    cons: '題目由客戶或公司決定、顧問型團隊需重視專案交期與工時管理、需配合歐美時差開會、職缺多需主動人脈開發。',
-    vec: { A: 35, B: 60, E: 85, G: 80, H: 78, M: 78, O: 30, P: 58, R: 45, S: 85, T: 78, X: 82 },
-    contextFactor: (geo, acadProb, hustle) => 0.65 + 0.35 * (hustle / 100)
+    id: 'global_tech_ic',
+    name: '3. 跨國研究機構 / 藥廠技術專家軌（ARO / Global RWE）',
+    badge: '業界・技術本位',
+    pros: '免寫計畫找錢、資源直接到位、高度發揮進階因果推論技術；偏向個人貢獻者，就事論事且對內向者友善。',
+    cons: '研究題目須配合客戶或商業策略（有專案被喊停的可能）、需重視交期與工時，且偶爾須配合跨時區會議。',
+    vec: { Q1: 70, Q2: 85, Q3: 85, Q4: 65, Q5: 20, Q6: 85, Q7: 70, Q8: 70 }
   },
   {
-    id: 'tw_mnc_local',
-    name: '4. 台灣本土外商藥廠 Medical Affairs / HEOR / RWE Manager',
-    tag: '前期高薪、上下班界線明確｜偏重商業溝通與策略、寫程式比例低',
-    pros: '起薪與福利優渥、目標清晰且成果即時落地、週休二日界線分明、無撰寫國科會計畫與升等壓力。',
-    cons: '較少親自執行複雜統計建模、研究完全服務於產品策略、高階職位多集中於台北、需面對外商組織調整風險。',
-    vec: { A: 25, B: 85, E: 35, G: 85, H: 78, M: 82, O: 22, P: 28, R: 22, S: 75, T: 85, X: 78 },
-    contextFactor: (geo, acadProb, hustle) => {
-      const commute = geo > 80 ? 0.85 : 0.96;
-      return commute * (0.70 + 0.30 * (hustle / 100));
-    }
-  },
-  {
-    id: 'overseas_hq',
-    name: '5. 海外跨國藥廠總部 Global RWE 科學家',
-    tag: '頂級方法學資源與高薪天花板｜需跨國搬遷與家庭協調',
-    pros: '同時具備頂級方法學純粹度、龐大研究預算、明確上下班界線與極高薪資職級天花板。',
-    cons: '需跨國移居並克服伴侶與家庭地理限制、異地生活適應成本高、簽證與職缺競爭激烈。',
-    vec: { A: 40, B: 80, E: 90, G: 85, H: 75, M: 92, O: 25, P: 55, R: 45, S: 88, T: 80, X: 88 },
-    contextFactor: (geo, acadProb, hustle) => Math.max(0.25, 1 - 0.72 * (geo / 100))
-  },
-  {
-    id: 'bridge_postdoc',
-    name: '6. 短期博士後研究員（1–2 年過渡與銜接）',
-    tag: '累積頂刊與等待理想缺額的緩衝｜前期薪資較低、定位具過渡性',
-    pros: '無教學與行政重擔、可專心衝刺代表作或等待合適教職開缺、同時保留轉戰學界與業界的緩衝時間。',
-    cons: '薪資明顯低於正職、缺乏長期職位保障、若無明確期限容易拉長職涯不確定性。',
-    vec: { A: 55, B: 38, E: 75, G: 30, H: 15, M: 18, O: 82, P: 85, R: 78, S: 40, T: 20, X: 25 },
-    contextFactor: (geo, acadProb, hustle) => 0.85
+    id: 'local_pharma',
+    name: '4. 外商藥廠專業經理 / 策略職（Medical / HEOR）',
+    badge: '業界・落地影響',
+    pros: '上下班與週末界線最分明、規則透明、研究成果能直接推動藥物上市或健保給付，實務成就感即時。',
+    cons: '親自寫程式與鑽研前沿方法學的比例大幅降低，工作重心在跨部門溝通與發包管理，社交消耗較高。',
+    vec: { Q1: 85, Q2: 85, Q3: 70, Q4: 85, Q5: 85, Q6: 85, Q7: 85, Q8: 85 }
   }
 ];
 
@@ -377,17 +247,15 @@ function resetAll() {
 
 function renderTabs() {
   const groupNames = [
-    '組1：自主與商業',
-    '組2：教學與方法學',
-    '組3：時間與節奏',
-    '組4：經費與穩定',
-    '組5：回報與過渡',
-    '組6：綜合權衡'
+    '組1：研究初心與原則',
+    '組2：遊戲規則與心境',
+    '組3：人際與專業重心',
+    '組4：時間節奏與權衡'
   ];
   document.getElementById('group-tabs').innerHTML = groupNames.map((name, idx) => {
     const active = idx === currentGroup;
     return `<button onclick="selectGroup(${idx})" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-      active ? 'bg-sky-600 text-white shadow' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+      active ? 'bg-slate-200 text-slate-900 shadow' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
     }">${name}</button>`;
   }).join('');
 }
@@ -400,9 +268,9 @@ function selectGroup(idx) {
 
 function changeGroup(delta) {
   const next = currentGroup + delta;
-  if (next >= 0 && next < 6) {
+  if (next >= 0 && next < 4) {
     selectGroup(next);
-    window.scrollTo({ top: 240, behavior: 'smooth' });
+    window.scrollTo({ top: 180, behavior: 'smooth' });
   }
 }
 
@@ -433,14 +301,14 @@ function renderQuestions() {
   container.innerHTML = groupQs.map(q => {
     const ans = answers[q.id];
     const w = weights[q.id] || 1;
-    const wClass = w === 3 ? 'bg-indigo-600 text-white border-indigo-400' :
-                   w === 2 ? 'bg-sky-500/20 text-sky-300 border-sky-500/40' :
+    const wClass = w === 3 ? 'bg-indigo-500/30 text-indigo-200 border-indigo-400/60' :
+                   w === 2 ? 'bg-sky-500/20 text-sky-200 border-sky-400/40' :
                              'bg-slate-800 text-slate-400 border-slate-700';
     return `
-      <div class="p-4 rounded-xl bg-slate-950/70 border ${ans ? 'border-slate-800' : 'border-slate-700/80'}">
+      <div class="p-4 rounded-xl bg-slate-950/60 border ${ans ? 'border-slate-800' : 'border-slate-700/70'}">
         <div class="flex items-start justify-between gap-3 mb-3">
           <div class="text-sm text-slate-200 font-medium leading-relaxed">
-            <span class="text-sky-400 font-mono font-bold mr-1.5">Q${q.id}.</span>${q.text}
+            <span class="text-slate-400 font-mono font-bold mr-1.5">Q${q.id}.</span>${q.text}
           </div>
           <span onclick="cycleWeight(${q.id})" class="weight-badge shrink-0 px-2.5 py-1 rounded border text-[11px] font-bold ${wClass}" title="點擊切換權重 (1x 一般 / 2x 重要 / 3x 核心底線)">
             ${w}x ${w === 3 ? '底線' : w === 2 ? '重要' : '一般'}
@@ -450,7 +318,7 @@ function renderQuestions() {
           ${labels.map(lb => {
             const selected = ans === lb.v;
             const btnStyle = selected
-              ? 'bg-sky-600 text-white border-sky-400 font-bold shadow'
+              ? 'bg-slate-200 text-slate-900 border-white font-bold shadow'
               : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border-slate-800';
             return `<button onclick="setAnswer(${q.id}, ${lb.v})" class="option-btn py-2 px-1 rounded-lg border text-xs ${btnStyle}">
               ${lb.text}
@@ -461,129 +329,79 @@ function renderQuestions() {
     `;
   }).join('');
 
-  document.getElementById('group-indicator').innerText = `第 ${currentGroup + 1} / 6 組`;
+  document.getElementById('group-indicator').innerText = `第 ${currentGroup + 1} / 4 組`;
   document.getElementById('btn-prev').disabled = currentGroup === 0;
-  document.getElementById('btn-next').disabled = currentGroup === 5;
+  document.getElementById('btn-next').disabled = currentGroup === 3;
   document.getElementById('progress-text').innerText = `${Object.keys(answers).length} / ${QUESTIONS.length}`;
 }
 
-function updateContext() {
-  document.getElementById('val-geo').innerText = `${document.getElementById('slider-geo').value}%`;
-  document.getElementById('val-acad-prob').innerText = `${document.getElementById('slider-acad-prob').value}%`;
-  document.getElementById('val-hustle').innerText = `${document.getElementById('slider-hustle').value}%`;
-  recalculateAll();
-}
-
 function recalculateAll() {
+  const keys = Object.keys(AXES);
   const axisScores = {};
-  Object.keys(AXES).forEach(k => { axisScores[k] = { num: 0, den: 0 }; });
+  keys.forEach(k => { axisScores[k] = { num: 0, den: 0 }; });
 
   QUESTIONS.forEach(q => {
     const val = answers[q.id] !== undefined ? answers[q.id] : 3;
-    const centered = (val - 3) / 2;
+    const centered = (val - 3) / 2; // -1 to +1
     const w = weights[q.id] || 1;
-
-    axisScores[q.pAxis].num += centered * q.pDir * w * 1.0;
-    axisScores[q.pAxis].den += w * 1.0;
-
-    axisScores[q.sAxis].num += centered * q.sDir * w * 0.4;
-    axisScores[q.sAxis].den += w * 0.4;
+    axisScores[q.axis].num += centered * q.dir * w;
+    axisScores[q.axis].den += w;
   });
 
   const userVec = {};
-  Object.keys(AXES).forEach(k => {
+  keys.forEach(k => {
     const ratio = axisScores[k].den > 0 ? axisScores[k].num / axisScores[k].den : 0;
     userVec[k] = Math.round((50 + ratio * 50) * 10) / 10;
   });
 
-  const geo = parseFloat(document.getElementById('slider-geo').value);
-  const acadProb = parseFloat(document.getElementById('slider-acad-prob').value);
-  const hustle = parseFloat(document.getElementById('slider-hustle').value);
-
+  // 嚴格零偏誤餘弦相似度（全中立時，所有路徑皆嚴格為 50.0%）
   const results = TRACKS.map(t => {
-    let dot = 0, normU = 0, normT = 0, sqDiff = 0;
-    const keys = Object.keys(AXES);
+    let dot = 0, normU = 0, normT = 0;
     keys.forEach(k => {
       const u = userVec[k] - 50;
       const v = t.vec[k] - 50;
       dot += u * v;
       normU += u * u;
       normT += v * v;
-      sqDiff += Math.pow(userVec[k] - t.vec[k], 2);
     });
-    const cos = (normU > 0 && normT > 0) ? dot / (Math.sqrt(normU) * Math.sqrt(normT)) : 0;
-    const rmse = Math.sqrt(sqDiff / keys.length);
-    const rawFit = Math.round((0.55 * (50 + cos * 50) + 0.45 * (100 - rmse)) * 10) / 10;
-    const factor = t.contextFactor(geo, acadProb, hustle);
-    const realScore = Math.round(rawFit * factor * 10) / 10;
-    return { ...t, rawFit, realScore };
-  });
-
-  const byRaw = [...results].sort((a, b) => b.rawFit - a.rawFit);
-  const byReal = [...results].sort((a, b) => b.realScore - a.realScore);
+    let fit = 50.0;
+    if (normU > 0 && normT > 0) {
+      const cos = dot / (Math.sqrt(normU) * Math.sqrt(normT));
+      const magFactor = Math.min(1, Math.sqrt(normU / keys.length) / 18);
+      fit = Math.round((50 + 50 * cos * magFactor) * 10) / 10;
+    }
+    return { ...t, fit };
+  }).sort((a, b) => b.fit - a.fit);
 
   const answeredCount = Object.keys(answers).length;
 
-  document.getElementById('top-raw-title').innerText = answeredCount === 0 ? '請先開始作答' : byRaw[0].name.replace(/^\d+\.\s*/, '');
-  document.getElementById('top-raw-score').innerText = answeredCount === 0 ? '--%' : `${byRaw[0].rawFit}%`;
-
-  document.getElementById('top-real-title').innerText = answeredCount === 0 ? '請先開始作答' : byReal[0].name.replace(/^\d+\.\s*/, '');
-  document.getElementById('top-real-score').innerText = answeredCount === 0 ? '--%' : `${byReal[0].realScore}%`;
-
-  // 中立張力偵測
-  if (answeredCount < 6) {
-    document.getElementById('tension-title').innerText = '等待更多作答數據';
-    document.getElementById('tension-desc').innerText = '完成至少一組題目後，系統將客觀整理你的核心偏好與潛在取捨。';
-  } else if (userVec.A >= 62 && userVec.G >= 62) {
-    document.getElementById('tension-title').innerText = '「高度題目自主」vs.「不想申請經費」';
-    document.getElementById('tension-desc').innerText = `你同時重視完全自主決定題目 (A=${userVec.A}%) 與免去寫計畫找錢 (G=${userVec.G}%)。可優先評估純研究機構或精緻小團隊結合產學案的模式。`;
-  } else if (userVec.E >= 62 && userVec.B >= 62) {
-    document.getElementById('tension-title').innerText = '「前沿方法學鑽研」vs.「明確上下班界線」';
-    document.getElementById('tension-desc').innerText = `你同時看重深度方法學 (E=${userVec.E}%) 與生活邊界 (B=${userVec.B}%)。可比較「駐台跨國方法學團隊」與「外商固定工時角色」的實際工時差異。`;
-  } else if (userVec.S <= 40 && userVec.M >= 62) {
-    document.getElementById('tension-title').innerText = '「喜愛教學分享」vs.「重視前期現金回報」';
-    document.getElementById('tension-desc').innerText = `你享受教學互動 (S=${userVec.S}%)，同時看重高現金回報 (M=${userVec.M}%)。可評估教職結合產學顧問，或業界中偏重學術溝通 (Medical Affairs) 的職位。`;
-  } else {
-    document.getElementById('tension-title').innerText = '偏好結構相對一致';
-    document.getElementById('tension-desc').innerText = `你的心理向量與「${byRaw[0].name.replace(/^\d+\.\s*/, '')}」高度一致，可進一步對照下方優缺點進行實務確認。`;
-  }
-
-  // 渲染賽道清單
-  document.getElementById('tracks-list').innerHTML = byReal.map((t, idx) => `
-    <div class="p-4 rounded-xl bg-slate-950/80 border ${idx === 0 && answeredCount > 0 ? 'border-emerald-500/50' : 'border-slate-800'}">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+  // 渲染四大路徑
+  document.getElementById('tracks-list').innerHTML = results.map((t, idx) => `
+    <div class="p-4 rounded-xl bg-slate-950/70 border ${idx === 0 && answeredCount > 0 ? 'border-slate-500' : 'border-slate-800'}">
+      <div class="flex items-center justify-between gap-2">
         <div>
           <div class="text-sm font-bold text-white flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-[11px] ${idx === 0 && answeredCount > 0 ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-300'}">#${idx + 1}</span>
+            <span class="px-2 py-0.5 rounded text-[11px] bg-slate-800 text-slate-300 border border-slate-700">${t.badge}</span>
             ${t.name}
           </div>
-          <div class="text-xs text-sky-400 mt-0.5">${t.tag}</div>
         </div>
-        <div class="flex items-center gap-4 shrink-0 text-right">
-          <div>
-            <div class="text-[10px] text-slate-500">純性格契合</div>
-            <div class="text-xs font-mono font-semibold text-slate-300">${t.rawFit}%</div>
-          </div>
-          <div>
-            <div class="text-[10px] text-emerald-400">綜合可行分數</div>
-            <div class="text-base font-mono font-bold text-emerald-400">${t.realScore}%</div>
-          </div>
+        <div class="text-right shrink-0">
+          <div class="text-base font-mono font-bold ${t.fit >= 60 ? 'text-sky-300' : 'text-slate-300'}">${t.fit.toFixed(1)}%</div>
         </div>
       </div>
-      <div class="w-full bg-slate-800 h-2 rounded-full mt-2.5 overflow-hidden flex">
-        <div class="bg-emerald-500 h-full" style="width: ${t.realScore}%"></div>
-        <div class="bg-sky-500/35 h-full" style="width: ${Math.max(0, t.rawFit - t.realScore)}%"></div>
+      <div class="w-full bg-slate-800 h-2 rounded-full mt-2.5 overflow-hidden">
+        <div class="bg-slate-300 h-full transition-all duration-300" style="width: ${t.fit}%"></div>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 text-xs">
-        <div class="text-slate-300"><span class="text-emerald-400 font-bold">優勢：</span>${t.pros}</div>
-        <div class="text-slate-400"><span class="text-amber-400 font-bold">取捨：</span>${t.cons}</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 mt-3 text-xs leading-relaxed">
+        <div class="text-slate-300"><span class="text-emerald-400 font-semibold">你會得到：</span>${t.pros}</div>
+        <div class="text-slate-400"><span class="text-amber-300 font-semibold">必須接受：</span>${t.cons}</div>
       </div>
     </div>
   `).join('');
 
   renderAxesAndRadar(userVec);
-  renderNeutralSummary(userVec, byRaw, byReal, answeredCount);
-  window.latestTelemetry = { userVec, byRaw, byReal, geo, acadProb, hustle, answeredCount };
+  renderNeutralSummary(userVec, results, answeredCount);
+  window.latestTelemetry = { userVec, results, answeredCount };
 }
 
 function renderAxesAndRadar(userVec) {
@@ -593,16 +411,17 @@ function renderAxesAndRadar(userVec) {
     const ax = AXES[k];
     return `
       <div class="text-xs">
-        <div class="flex justify-between mb-0.5">
-          <span class="font-semibold text-slate-300">${ax.code} ${ax.name}</span>
-          <span class="font-mono font-bold text-white">${v}%</span>
+        <div class="flex justify-between mb-1">
+          <span class="font-semibold text-slate-300">${ax.name}</span>
+          <span class="font-mono text-slate-400">${v.toFixed(1)}%</span>
         </div>
-        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-          <div class="bg-sky-500 h-full" style="width: ${v}%"></div>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full relative overflow-hidden">
+          <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-600"></div>
+          <div class="bg-sky-400 h-full transition-all duration-300" style="width: ${v}%"></div>
         </div>
         <div class="flex justify-between text-[10px] text-slate-500 mt-0.5">
-          <span>0%: ${ax.left}</span>
-          <span>100%: ${ax.right}</span>
+          <span>${ax.left}</span>
+          <span>${ax.right}</span>
         </div>
       </div>
     `;
@@ -613,17 +432,15 @@ function renderAxesAndRadar(userVec) {
   radarChartInstance = new Chart(ctx, {
     type: 'radar',
     data: {
-      labels: keys.map(k => `${k} ${AXES[k].name.slice(0, 4)}`),
-      datasets: [
-        {
-          label: '你的偏好向量',
-          data: keys.map(k => userVec[k]),
-          backgroundColor: 'rgba(56, 189, 248, 0.22)',
-          borderColor: '#38bdf8',
-          pointBackgroundColor: '#bae6fd',
-          borderWidth: 2
-        }
-      ]
+      labels: keys.map(k => AXES[k].name),
+      datasets: [{
+        label: '你的偏好光譜',
+        data: keys.map(k => userVec[k]),
+        backgroundColor: 'rgba(148, 163, 184, 0.25)',
+        borderColor: '#cbd5e1',
+        pointBackgroundColor: '#f8fafc',
+        borderWidth: 2
+      }]
     },
     options: {
       responsive: true,
@@ -634,43 +451,51 @@ function renderAxesAndRadar(userVec) {
           ticks: { stepSize: 25, display: false },
           grid: { color: 'rgba(148, 163, 184, 0.15)' },
           angleLines: { color: 'rgba(148, 163, 184, 0.15)' },
-          pointLabels: { color: '#cbd5e1', font: { size: 10 } }
+          pointLabels: { color: '#cbd5e1', font: { size: 11 } }
         }
       },
-      plugins: { legend: { labels: { color: '#e2e8f0', font: { size: 11 } } } }
+      plugins: { legend: { display: false } }
     }
   });
 }
 
-function renderNeutralSummary(v, byRaw, byReal, count) {
+function renderNeutralSummary(v, results, count) {
   const box = document.getElementById('neutral-summary');
   if (count === 0) {
-    box.innerHTML = `<p class="text-slate-400">尚未作答。請完成上方 6 組共 36 題中立題目，系統將即時生成你的客觀分析摘要。</p>`;
+    box.innerHTML = `<p class="text-slate-400">尚未作答。目前四條路徑皆為嚴格中立基準 50.0%，請依直覺完成上方 24 題。</p>`;
     return;
   }
-  const top1 = byReal[0];
-  const top2 = byReal[1];
+
+  const top1 = results[0];
+  const top2 = results[1];
+  const gap = Math.round((top1.fit - top2.fit) * 10) / 10;
+
+  let tensionMsg = '';
+  if (v.Q1 < 42 && v.Q6 > 58) {
+    tensionMsg = `<p class="text-sky-200/90"><strong>🔍 偵測到核心內在張力：</strong>你在「知識動機」上偏向純粹學術好奇 (${v.Q1}%)，但在「前期磨合」上對寫計畫與升等有明顯抗拒 (${v.Q6}%)。這代表你的猶豫不是因為不知道自己喜歡什麼，而是「喜歡的事」與「該環境的入場規則」存在衝突。建議特別留意<strong>純研究機構</strong>與<strong>跨國技術專家軌</strong>這兩個折衷地帶。</p>`;
+  }
+
   box.innerHTML = `
-    <p><strong>1. 綜合評估首選：${top1.name}</strong>（純性格契合 ${top1.rawFit}%｜綜合可行分數 ${top1.realScore}%）<br>
-    這條路徑最能滿足你目前的核心需求（優勢：${top1.pros}），但同時你也需要確認自己是否願意承擔其對應代價（取捨：${top1.cons}）。</p>
-    <p><strong>2. 次佳對照方案：${top2.name}</strong>（純性格契合 ${top2.rawFit}%｜綜合可行分數 ${top2.realScore}%）<br>
-    若首選與次選分數接近（差距在 5%～8% 以內），代表兩條路對你而言各有強烈吸引力，建議透過實際訪談兩邊的在職前輩，以具體 Offer 條件作為最終決策依據。</p>
+    <p><strong>1. 最高方向一致性：${top1.name}</strong>（${top1.fit.toFixed(1)}%）<br>
+    與次高選項「${top2.name}（${top2.fit.toFixed(1)}%）」差距為 <strong>${gap}%</strong>。${
+      gap <= 8 ? '兩者分數非常接近，代表你對這兩種生活型態各有看重，最後的關鍵在於「你比較願意吞下哪一邊的日常缺點」。' : '方向性已相對明確，建議直接核對該路徑的「必須接受」欄位，確認自己是否真的能長期共存。'
+    }</p>
+    ${tensionMsg}
   `;
 }
 
 function copyNeutralPrompt() {
   const t = window.latestTelemetry;
-  const vecStr = Object.keys(AXES).map(k => `${k}(${AXES[k].name}): ${t.userVec[k]}%`).join(', ');
-  const rankStr = t.byReal.map((r, i) => `${i+1}. ${r.name} [純性格契合: ${r.rawFit}% | 綜合可行: ${r.realScore}%]`).join('\n');
+  const vecStr = Object.keys(AXES).map(k => `${AXES[k].name}: ${t.userVec[k]}%`).join(', ');
+  const rankStr = t.results.map((r, i) => `${i+1}. ${r.name} [${r.fit}%]`).join('\n');
 
-  const promptText = `請以「完全中立、客觀平衡、不預設學界或業界優劣」的職涯顧問身分，分析我最新的 v7.0 中立評估數據（已作答 ${t.answeredCount}/36 題）：
-【外部客觀條件】留台優先度=${t.geo}%, 教職缺額把握度=${t.acadProb}%, 業界人脈開拓意願=${t.hustle}%
-【十二維中性偏好光譜】${vecStr}
-【六大職涯路徑排行】\n${rankStr}
-請客觀比較前兩名路徑各自帶給我的核心優勢與必要取捨，並給出平衡且務實的下一步驗證建議。`;
+  const promptText = `請以完全中立、不偏頗學界或業界的立場，幫我解讀這份 v8.0 內在價值羅盤數據（已作答 ${t.answeredCount}/24 題）：
+【八維中性光譜（50%為中立）】${vecStr}
+【四大路徑契合度】\n${rankStr}
+請客觀分析我內在的矛盾點，並對比前兩名路徑的真實日常取捨，不要替我做決定，而是幫我看清楚我真正該問自己的問題。`;
 
   navigator.clipboard.writeText(promptText).then(() => {
-    showToast('已複製 v7.0 中立評估數據！');
+    showToast('已複製 v8.0 中立數據！');
   });
 }
 
